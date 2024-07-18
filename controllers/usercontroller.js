@@ -175,22 +175,28 @@ const login = async (req, res, next) => {
   }
 };
 
-const forgotPassword = async (req, res) => {
+const forgotPassword = async (req, res, next) => {
   const { email } = req.body;
   try {
-    const user = await userServices.findUserByEmail("email", email);
-    user.verified = false;
-    user.token = null;
-    await user.save();
-    logger.info(`Send token to reset password to ${user._id}`);
-    await otpServices.deleteUserOtpsByUserId(user._id);
-    let otp = await otpServices.createUserOtp(user._id);
-    await emailServices.sendOtpEmail(user.email, otp);
-    return res.status(200).json({
-      status: "success",
-      message: "User email verified successfully",
-      data: email,
-    });
+    const user = await userServices.findUserByOne("email", email);
+    if (user) {
+      user.verified = false;
+      user.token = null;
+      await user.save();
+      logger.info(`Send token to reset password to ${user._id}`);
+      await otpServices.deleteUserOtpsByUserId(user._id);
+      let otp = await otpServices.createUserOtp(user._id);
+      await emailServices.sendOtpEmail(user.email, otp);
+      return res.status(200).json({
+        status: "success",
+        message: "User email verified successfully",
+        data: email,
+      });
+    } else {
+      const error = new Error("Email Does Not Exist");
+      error.status = 404;
+      throw error;
+    }
   } catch (err) {
     logger.error("Authentication/forgotPassword:", err);
     next(err);
