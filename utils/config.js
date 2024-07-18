@@ -7,7 +7,9 @@ const EMAIL_USER = process.env.EMAIL_USER;
 const EMAIL_PASS = process.env.EMAIL_PASS;
 const CLOUD_NAME = process.env.CLOUD_NAME;
 const CLOUD_API_KEY = process.env.CLOUD_API_KEY;
-const CLOUD_API_SECRET = process.env.CLOUD_API_SECRET
+const CLOUD_API_SECRET = process.env.CLOUD_API_SECRET;
+const CLIENTID = process.env.CLIENTID;
+const CLIENTSECRET = process.env.CLIENTSECRET;
 
 module.exports = {
   MONGODB_URI,
@@ -17,5 +19,7 @@ module.exports = {
   EMAIL_PASS,
   CLOUD_NAME,
   CLOUD_API_KEY,
-  CLOUD_API_SECRET
+  CLOUD_API_SECRET,
+  CLIENTSECRET,
+  CLIENTID,
 };

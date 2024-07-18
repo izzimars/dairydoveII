@@ -1,13 +1,13 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const userServices = require("../services/userService"); // Replace with your User model
+const config = require("../utils/config");
 
 passport.use(
   new GoogleStrategy(
     {
-      clientID:
-        "527503269478-khfbnvbkib0139s2b2dtm22bt53hkeff.apps.googleusercontent.com",
-      clientSecret: "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",
+      clientID: config.CLIENTID,
+      clientSecret: config.CLIENTSECRET,
       callbackURL: "http://localhost:3000/auth/google/callback",
       //scope: ["profile", "email"],
     },
