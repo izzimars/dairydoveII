@@ -8,7 +8,7 @@ const findUserByOne = async (field, value) => {
     const user = await User.findOne(query);
     return user;
   } catch (err) {
-    logger.info(err.message);
+    logger.info(err);
     const error = new Error("Internal Server Error");
     error.status = 500;
     throw error;

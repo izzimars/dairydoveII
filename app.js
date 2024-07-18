@@ -4,13 +4,10 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const config = require("./utils/config");
 const logger = require("./utils/logger");
-const userRoutes = require("./routers/userrouters.js");
+const userRoutes = require("./routers/userrouters");
 const Sentry = require("@sentry/node");
-//const remindersroute = require("./controllers/reminderscontroller.js");
-//const {
-//   diaryrouter,
-//   fetchEmails,
-// } = require("./controllers/diarycontroller.js");
+const remindersroute = require("./routers/reminderrouters");
+const diaryrouter = require("./routers/diaryrouter");
 const cors = require("cors");
 const middleware = require("./utils/middleware");
 const app = express();
@@ -31,8 +28,8 @@ app.use(bodyParser.json());
 //fetchEmails();
 // Use routes
 app.use("/api/users", userRoutes);
-//app.use("/api/diaries", diaryrouter);
-//app.use("/api/reminders", remindersroute);
+app.use("/api/diaries", diaryrouter);
+app.use("/api/reminders", remindersroute);
 
 //middleware to handle errors in utils module
 app.use(middleware.errorHandler);

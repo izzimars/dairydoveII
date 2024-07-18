@@ -1,131 +1,98 @@
 const express = require("express");
-const Reminder = require("../models/reminderbot");
+const reminderBot = require("./reminderbots");
 const remindersroute = express.Router();
-const config = require("../utils/config");
-const logger = require("../utils/logger");
-const middleware = require("../utils/middleware");
-const secret = config.SECRET;
-const {
-  signupSchema,
-  loginSchema,
-  resendOTPSchema,
-  forgotPasswordSchema,
-  dateSchema,
-  verifyOTPSchema,
-  timeSchema,
-  personalInfoSchema,
-  newPasswordSchema,
-  setupPasswdSchema,
-  changeemailSchema,
-  changeemailVerifySchema,
-} = require("../models/validationschema");
-const validate = require("../utils/validate");
-const makeReminder = require("../models/reminderbot");
-
-const {
-  addReminder,
-  scheduleAllReminders,
-  deleteReminders,
-  deleteReminder,
-  updateReminderTimes,
-} = require("./reminderbot");
+const reminderServices = require("../services/reminderServices");
 
 // getting all reminders
-remindersroute.get("/", async (req, res) => {
-  const userId = req.body.userId;
+const getReminders = async (req, res, next) => {
   try {
-    const reminders = await Reminder.find({ userId });
+    const reminders = await reminderServices.findReminderById(req.userId);
     return res.status(200).json({
       status: "success",
       message: "Reminders successfully retrieved",
       data: reminders,
     });
   } catch (err) {
-    console.error("Error getting reminders", err);
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-      error: "Internal Server Error",
-    });
+    console.error("Error creating reminder", err);
+    logger.error("Diary/Post:", err);
+    next(err);
   }
-});
+};
 
 //add new reminder
-remindersroute.post("/addnew", async (req, res) => {
-  const { userId, time } = req.body;
+const addReminders = async (req, res, next) => {
+  let reminders = req.body.times;
+  let newreminders = [];
   try {
-    addReminder(userId, time);
-    return res.status(200).json({
-      status: "success",
-      message: "Reminder successfully added",
-    });
+    let timeArr = [];
+    let convDbArr = [];
+    let dbArr = await reminderServices.findReminderById(req.userId);
+    for (const time of reminders) {
+      let arr = reminderBot.timeSplitter(time);
+      timeArr.push(arr);
+    }
+    for (let i = 0; i < dbArr.length; i++) {
+      let arr = [dbArr[i].hour, dbArr[i].time];
+      convDbArr.push(arr);
+    }
+    for (let i = 0; i < timeArr.length; i++) {
+      let flag = false;
+      for (let j = 0; j < convDbArr.length; j++) {
+        if (
+          timeArr[i].every((element, index) => {
+            return element === convDbArr[j][index];
+          })
+        ) {
+          flag = true;
+          break;
+        }
+      }
+      if (!flag) {
+        newreminders.push(reminders[i]);
+      }
+    }
+    if (newreminders.length != 0) {
+      var suc = 0;
+      for (const time of newreminders) {
+        let hourmins = remainderBot.timeSplitter(time);
+        await reminderServices.createReminder(
+          res.userId,
+          hourmins[0],
+          hourmins[1]
+        );
+        suc += 1;
+      }
+      return res.status(200).json({
+        status: "success",
+        message: `${suc} remainders successfully added`,
+      });
+    } else {
+      return res.status(200).json({
+        status: "success",
+        message: `Reminders already exists`,
+      });
+    }
   } catch (err) {
-    console.error("Error creating reminder", err);
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-      error: "Internal Server Error",
-    });
+    console.error("Error deleting reminders", err);
+    logger.error("Diary/Post:", err);
+    next(err);
   }
-});
-
-//update reminder
-remindersroute.patch("/update", async (req, res) => {
-  const { reminderId, newTime } = req.body;
-  try {
-    const reminders = updateReminderTimes(reminderId, newTime);
-    //const reminders = await Reminder.findOne({ reminderId });
-    return res.status(200).json({
-      status: "success",
-      message: "Reminder successfully updated",
-      data: reminders,
-    });
-  } catch (err) {
-    console.error("Error updating reminder", err);
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-      error: "Internal Server Error",
-    });
-  }
-});
+};
 
 //delete a reminder
-remindersroute.delete("/delete/:id", async (req, res) => {
+const deleteReminders = async (req, res, next) => {
   const reminderId = req.params;
   try {
-    deleteReminder(reminderId);
+    await reminderServices.deleteReminder(reminderId);
     return res.status(200).json({
       status: "success",
       message: "Reminder successfully deleted",
     });
   } catch (err) {
     console.error("Error deleting reminders", err);
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-      error: "Internal Server Error",
-    });
+    logger.error("Diary/Post:", err);
+    next(err);
   }
-});
+};
 
-//delete all
-remindersroute.delete("/deleteall", async (req, res) => {
-  const userId = req.body;
-  try {
-    deleteReminders(userId);
-    return res.status(200).json({
-      status: "success",
-      message: "Reminders successfully deleted",
-    });
-  } catch (err) {
-    console.error("Error deleting reminders", err);
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-      error: "Internal Server Error",
-    });
-  }
-});
-
-module.exports = remindersroute;
+module.exports = { addReminders, getReminders, deleteReminders };

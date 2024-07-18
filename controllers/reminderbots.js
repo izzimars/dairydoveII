@@ -26,7 +26,7 @@ const scheduleReminder = async (reminder) => {
   } catch (error) {
     logger.error(`Error scheduling reminder: ${error}`);
     error.status = 500;
-    return error;
+    throw error;
   }
 };
 
@@ -40,6 +40,8 @@ const scheduleAllReminders = async () => {
     logger.info("All reminders scheduled.");
   } catch (err) {
     logger.error("Error fetching reminders:", err);
+    err.status = 500;
+    throw err;
   }
 };
 
