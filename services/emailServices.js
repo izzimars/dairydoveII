@@ -80,7 +80,6 @@ const extractText = (item) => {
 const emailHandler = async (messages) => {
   for (const item of messages) {
     const [text, emailaddress] = extractText(item);
-    console.log(emailaddress);
     if (emailaddress) {
       try {
         const user = await userServices.findUserByOne("email", emailaddress);

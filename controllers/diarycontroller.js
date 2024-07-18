@@ -13,7 +13,9 @@ cron.schedule("*/1 * * * *", async () => {
   try {
     const messages = await emailServices.fetchEmails();
     console.log("Fetching email");
-    await emailServices.emailHandler(messages);
+    if (messages.length > 0) {
+      await emailServices.emailHandler(messages);
+    }
   } catch (error) {
     logger.error(`Error in scheduled task: ${error.message}`);
   }
