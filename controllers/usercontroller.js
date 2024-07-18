@@ -7,6 +7,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("../utils/config");
 const remainderBots = require("./reminderbots");
+const reminderServices = require("../services/reminderServices");
 
 const signup = async (req, res, next) => {
   const { fullname, username, email, phonenumber, password } = req.body;
@@ -214,7 +215,7 @@ const newPassword = async (req, res) => {
         message: "User not found",
       });
     }
-    if (user.verified) {
+    if (!user.verified) {
       return res.status(404).json({
         status: "error",
         message: "Invalid user route",
