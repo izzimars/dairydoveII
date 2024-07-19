@@ -18,7 +18,7 @@ const findReminderById = async (remId) => {
 
 const findUserReminder = async (value) => {
   try {
-    const rem = await Reminder.find({ userId: value });
+    const rem = await Reminder.find(value);
     return rem;
   } catch (err) {
     logger.info(err.message);

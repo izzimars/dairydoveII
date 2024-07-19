@@ -6,7 +6,7 @@ const reminderServices = require("../services/reminderServices");
 const getReminders = async (req, res, next) => {
   try {
     const reminders = await reminderServices.findUserReminder({
-      _id: req.userId,
+      userId: req.userId,
     });
     return res.status(200).json({
       status: "success",

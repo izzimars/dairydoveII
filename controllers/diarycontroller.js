@@ -65,7 +65,7 @@ const filter = async (req, res, next) => {
   try {
     const endDateObj = new Date(endDate);
     endDateObj.setDate(endDateObj.getDate() + 1);
-    const incrementedEndDate = endDateObj.toISOString().split('T')[0];
+    const incrementedEndDate = endDateObj.toISOString().split("T")[0];
     const diaries = await diaryServices.findUserDiaries({
       userId: req.userId,
       date: { $gte: new Date(startDate), $lte: new Date(incrementedEndDate) },
