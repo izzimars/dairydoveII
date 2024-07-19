@@ -146,10 +146,18 @@ const login = async (req, res, next) => {
         message: "User not verified",
       });
     }
+    if (user.token) {
+      return res.status(403).json({
+        status: "error",
+        message: "You already have an active session. Please logout first.",
+      });
+    }
     logger.info(`User ${user.username} has been successfully signed in.`);
     const token = jwt.sign({ userId: user._id }, config.SECRET, {
       expiresIn: "3h",
     });
+    user.token = token;
+    await user.save();
     return res.status(200).json({
       status: "success",
       message: "user signed in successfully",
@@ -231,14 +239,12 @@ const setup = async (req, res, next) => {
   const reminders = req.body.times;
   try {
     for (const time of reminders) {
-      let hourmins = await remainderBots.timeSplitter(time);
-      let newReminder = await reminderServices.createReminder(
-        req.userId,
+      let hourmins = remainderBots.timeSplitter(time);
+      await reminderServices.createReminder(
+        res.userId,
         hourmins[0],
         hourmins[1]
       );
-      await remainderBots.scheduleReminder(newReminder);
-      logger.info(`The reminder has been set for ${newReminder._id}`);
       suc += 1;
     }
     const user = await userServices.findUserByOne("_id", req.userId);
@@ -267,7 +273,7 @@ const personalinfo = async (req, res) => {
         { email: user.email },
         { phonenumber: user.phonenumber },
         { verified: user.verified },
-        { profilePicture: user.profilePicture || null },
+        { profilePicture: user.profilePicture },
       ],
     });
   } catch (err) {
@@ -303,10 +309,24 @@ const profilePicture = async (req, res) => {
   }
 };
 
-const personalinfopost = async (req, res) => {
+const personalinfopost = async (req, res, next) => {
   const { fullname, username, phonenumber } = req.body;
   try {
-    const user = await userServices.findUserByOne("_id", req.userId);
+    let user = await userServices.findUserByOne("username", username);
+    if (user) {
+      return res.status(400).json({
+        status: "error",
+        message: "Username is already taken",
+      });
+    }
+    user = await userServices.findUserByOne("phonenumber", phonenumber);
+    if (user) {
+      return res.status(400).json({
+        status: "error",
+        message: "Phonenumber is already taken",
+      });
+    }
+    user = await userServices.findUserByOne("_id", req.userId);
     user.fullname = fullname || user.fullname;
     user.username = username || user.username;
     user.phonenumber = phonenumber || user.phonenumber;
@@ -347,7 +367,14 @@ const changepassword = async (req, res) => {
 const changeemail = async (req, res) => {
   const { email } = req.body;
   try {
-    const user = await userServices.findUserByOne("_id", req.userId);
+    let user = await userServices.findUserByOne("email", email);
+  if (user) {
+    return res.status(400).json({
+      status: "error",
+      message: "Email already exists",
+    });
+  }
+    user = await userServices.findUserByOne("_id", req.userId);
     user.verified = false;
     user.email = email;
     await user.save();

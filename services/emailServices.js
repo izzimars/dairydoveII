@@ -166,7 +166,17 @@ const sendNullUserEmail = async (user_email) => {
   try {
     const subject = "Failed to save Diary";
     const logoURL = `https://res.cloudinary.com/dwykmvdhb/image/upload/v1721222788/xn1fblohfrvwopzcmaq3.png`;
-    const html = `<p>Either user is not registered or not verified, <b>Log into diary dove to rectify</b> </p>`;
+    const html = `
+    <div style="background-color: #f0f0f0; padding: 20px;">
+      <section style="max-width: 600px; margin: auto; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <div style="display:block;"><img src= "${logoURL}" alt="Diary Dove logo" style="width:43px; height:36px; display:inline;">
+          <h1 style="color: #DA9658; display:inline; ">Dairy Dove</h2>
+        </div>
+        <h3>Failed to save Diary</h3>
+        <p>Either user is not registered or not verified, <b>Log into diary dove to rectify</b> </p>
+        <p>Ignore this message if you have already been verified.</p>
+      </section>
+    </div>`;
     await sendEmail(user_email, subject, "", html);
   } catch (err) {
     logger.error(err.message);
@@ -178,7 +188,16 @@ const sendSucUserEmail = async (user_email) => {
   try {
     const subject = `Diary successfully logged`;
     const logoURL = `https://res.cloudinary.com/dwykmvdhb/image/upload/v1721222788/xn1fblohfrvwopzcmaq3.png`;
-    const html = `<p>Diary has been saved to the server.</p>`;
+    const html = `
+    <div style="background-color: #f0f0f0; padding: 20px;">
+      <section style="max-width: 600px; margin: auto; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <div style="display:block;"><img src= "${logoURL}" alt="Diary Dove logo" style="width:43px; height:36px; display:inline;">
+          <h1 style="color: #DA9658; display:inline; ">Dairy Dove</h2>
+        </div>
+        <h3>Diary successfully logged</h3>
+        <p>Diary has been successfully logged.</p>
+      </section>
+    </div>`;
     await sendEmail(user_email, subject, "", html);
   } catch (err) {
     logger.error(err.message);
@@ -190,7 +209,16 @@ const sendFaiUserEmail = async (user_email) => {
   try {
     const subject = "An error occured";
     const logoURL = `https://res.cloudinary.com/dwykmvdhb/image/upload/v1721222788/xn1fblohfrvwopzcmaq3.png`;
-    const html = `<p>Error occured on the server please resend your diary or log in to diary dove to log in app </p>`;
+    const html = `
+    <div style="background-color: #f0f0f0; padding: 20px;">
+      <section style="max-width: 600px; margin: auto; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <div style="display:block;"><img src= "${logoURL}" alt="Diary Dove logo" style="width:43px; height:36px; display:inline;">
+          <h1 style="color: #DA9658; display:inline; ">Dairy Dove</h2>
+        </div>
+        <h3>An error occured</h3>
+        <p>Error occured on the server please resend your diary or sign in to diary dove to log your entry </p>
+      </section>
+    </div>`;
     await sendEmail(user_email, subject, "", html);
   } catch (err) {
     logger.error("Error occured while sending failure email: ", err.message);
@@ -202,7 +230,18 @@ const sendRemUserEmail = async (useremail, username) => {
   try {
     const subject = "Daily Reminder";
     const logoURL = `https://res.cloudinary.com/dwykmvdhb/image/upload/v1721222788/xn1fblohfrvwopzcmaq3.png`;
-    const html = `<p></p>`;
+    const html = `
+    <div style="background-color: #f0f0f0; padding: 20px;">
+      <section style="max-width: 600px; margin: auto; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <div style="display:block;"><img src= "${logoURL}" alt="Diary Dove logo" style="width:43px; height:36px; display:inline;">
+          <h1 style="color: #DA9658; display:inline; ">Dairy Dove</h2>
+        </div>
+        <h3>Daily Reminder</h3>
+        <p>It is time to take a break and be one with your thoughts. Diary Dove is reminding you log a diary entry now.<br/>
+        Reply this message or sign into the app to lod your entry</p>
+        <p>Ignore this message if you have already been logged your reminder for this time.</p>
+      </section>
+    </div>`;
     await sendEmail(user_email, subject, "", html);
   } catch (err) {
     logger.error("Error occured while sending failure email: ", err.message);

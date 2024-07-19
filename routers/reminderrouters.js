@@ -21,7 +21,7 @@ remindersroute.post(
 remindersroute.delete(
   "/delete/:id",
   middleware.verifyToken,  
-  validate(schema.mongodbSchema, params),
+  validate(schema.mongodbSchema, "params"),
   reminderController.deleteReminders
 );
 

@@ -27,13 +27,13 @@ diaryrouter.get(
 );
 
 diaryrouter.get("/:id",
-  validate(schema.mongodbSchema, params),
+  validate(schema.mongodbSchema, "params"),
   middleware.verifyToken, 
   diaryController.getid
 );
 
 diaryrouter.patch("/:id", 
-  validate(schema.mongodbSchema, params),
+  validate(schema.mongodbSchema, "params"),
   middleware.verifyToken, 
   diaryController.postUpdate
 );
@@ -41,7 +41,7 @@ diaryrouter.patch("/:id",
 diaryrouter.delete(
   "/delete/:id",
   middleware.verifyToken,
-  validate(schema.mongodbSchema, params),
+  validate(schema.mongodbSchema, "params"),
   diaryController.deleteDiary
 );
 
