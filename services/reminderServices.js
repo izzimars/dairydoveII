@@ -5,6 +5,7 @@ const schedule = require("node-schedule");
 const findReminderById = async (remId) => {
   try {
     const rem = await Reminder.findById({ _id: remId });
+    console.log(rem);
     logger.info(`Remainder ${remId} successfully found`);
     return rem;
   } catch (err) {
@@ -17,7 +18,7 @@ const findReminderById = async (remId) => {
 
 const findUserReminder = async (value) => {
   try {
-    const rem = await Reminder.find(value);
+    const rem = await Reminder.find({ userId: value });
     return rem;
   } catch (err) {
     logger.info(err.message);

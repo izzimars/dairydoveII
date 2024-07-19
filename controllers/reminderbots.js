@@ -32,7 +32,12 @@ const scheduleReminder = async (reminder) => {
           <p>Ignore this message if you have already been logged your reminder for this time.</p>
         </section>
       </div>`;
-      await sendEmail(user.email, subject, "", html);
+      await emailServices.sendEmail(
+        user.email,
+        (subject = "Daily Reminder"),
+        "",
+        html
+      );
     });
   } catch (error) {
     logger.error(`Error scheduling reminder: ${error}`);

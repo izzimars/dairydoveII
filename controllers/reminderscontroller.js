@@ -5,7 +5,9 @@ const reminderServices = require("../services/reminderServices");
 // getting all reminders
 const getReminders = async (req, res, next) => {
   try {
-    const reminders = await reminderServices.findReminderById(req.userId);
+    const reminders = await reminderServices.findUserReminder({
+      _id: req.userId,
+    });
     return res.status(200).json({
       status: "success",
       message: "Reminders successfully retrieved",
@@ -34,8 +36,6 @@ const addReminders = async (req, res, next) => {
       let arr = [dbArr[i].hour, dbArr[i].time];
       convDbArr.push(arr);
     }
-    console.log(timeArr);
-    console.log(convDbArr);
     for (let i = 0; i < timeArr.length; i++) {
       let flag = false;
       for (let j = 0; j < convDbArr.length; j++) {
