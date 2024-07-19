@@ -24,7 +24,6 @@ const googleAuthCallback = async (req, res, next) => {
       const refreshtoken = jwt.sign({ userId: user._id }, config.SECRET, {
         expiresIn: "7h",
       });
-      console.log("Generated Token: ", token);
       // Send the token, email, and username as response
       res.status(200).json({
         status: "success",
