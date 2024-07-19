@@ -19,9 +19,20 @@ const scheduleReminder = async (reminder) => {
     );
     schedule.scheduleJob(rule, async () => {
       logger.info(`Reminder job running for user ${user._id}`);
-      let text = `Hello ${user.username}, it is time for a new diary entry in your personal dove diary. \n 
-        Make your new entries here and view them on your dashboard later.`;
-      await emailServices.sendEmail(user.email, "Daily Reminder", text, "");
+      const logoURL = `https://res.cloudinary.com/dwykmvdhb/image/upload/v1721222788/xn1fblohfrvwopzcmaq3.png`;
+      const html = `
+        <div style="background-color: #f0f0f0; padding: 20px;">
+        <section style="max-width: 600px; margin: auto; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+          <div style="display:block;"><img src= "${logoURL}" alt="Diary Dove logo" style="width:43px; height:36px; display:inline;">
+            <h1 style="color: #DA9658; display:inline; ">Dairy Dove</h2>
+          </div>
+          <h3>Daily Reminder</h3>
+          <p>It is time to take a break and be one with your thoughts. Diary Dove is reminding you log a diary entry now.<br/>
+          Reply this message or sign into the app to load your entry</p>
+          <p>Ignore this message if you have already been logged your reminder for this time.</p>
+        </section>
+      </div>`;
+      await sendEmail(user_email, subject, "", html);
     });
   } catch (error) {
     logger.error(`Error scheduling reminder: ${error}`);

@@ -238,7 +238,7 @@ const sendRemUserEmail = async (useremail, username) => {
         </div>
         <h3>Daily Reminder</h3>
         <p>It is time to take a break and be one with your thoughts. Diary Dove is reminding you log a diary entry now.<br/>
-        Reply this message or sign into the app to lod your entry</p>
+        Reply this message or sign into the app to load your entry</p>
         <p>Ignore this message if you have already been logged your reminder for this time.</p>
       </section>
     </div>`;
