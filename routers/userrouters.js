@@ -81,7 +81,7 @@ userrouter.post(
 
 userrouter.post(
   "/personalinfo/changeemail/verify",
-  validate(schema.changeemailSchema),
+  validate(schema.changeemailVerifySchema),
   middleware.verifyToken,
   userController.changeemailverify
 );

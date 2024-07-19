@@ -360,6 +360,10 @@ const changeemail = async (req, res) => {
     await otpServices.deleteUserOtpsByUserId(user._id);
     let otp = await otpServices.createUserOtp(user._id);
     await emailServices.sendOtpEmail(email, otp);
+    return res.status(200).json({
+      status: "success",
+      message: "OTP successfully sent",
+    });
   } catch (err) {
     logger.error("user/changeemail: ", err);
     next(err);

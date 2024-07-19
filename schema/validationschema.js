@@ -131,6 +131,16 @@ const changeemailVerifySchema = Joi.object({
     "any.only": "Invalid OTP",
   }),
 });
+
+const mongoobjectIdPattern = /^[0-9a-fA-F]{24}$/;
+
+const mongodbSchema = Joi.object({
+    id: Joi.string().pattern(mongoobjectIdPattern).required().messages({
+        'string.pattern.base': 'Invalid MongoDB ObjectID',
+    }),
+});
+
+
 module.exports = {
   signupSchema,
   personalInfoSchema,
@@ -146,4 +156,5 @@ module.exports = {
   changeemailVerifySchema,
   getDiarySchema,
   postSchema,
+  mongodbSchema
 };
