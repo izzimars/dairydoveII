@@ -121,7 +121,7 @@ const resendOTPCode = async (req, res, next) => {
     return res.status(200).json({
       status: "success",
       message: "OTP sent successfully",
-      data: {email},
+      data: { email },
     });
   } catch (err) {
     logger.error("Authentication/Verify:", err);
@@ -164,12 +164,12 @@ const login = async (req, res, next) => {
     return res.status(200).json({
       status: "success",
       message: "user signed in successfully",
-      data: [        
-          {token: token},
-          {refreshtoken:refreshtoken},
-          {username: user.username},
-          {email: user.email},
-          {setup: user.setup},        
+      data: [
+        { token: token },
+        { refreshtoken: refreshtoken },
+        { username: user.username },
+        { email: user.email },
+        { setup: user.setup },
       ],
     });
   } catch (err) {
@@ -192,7 +192,7 @@ const forgotPassword = async (req, res, next) => {
       return res.status(200).json({
         status: "success",
         message: "OTP sent successfully",
-        data: {email},
+        data: { email },
       });
     } else {
       const error = new Error("Email Does Not Exist");
@@ -240,9 +240,9 @@ const setup = async (req, res, next) => {
   const reminders = req.body.times;
   try {
     for (const time of reminders) {
-      let hourmins = remainderBots.timeSplitter(time);
+      let hourmins = await remainderBots.timeSplitter(time);
       await reminderServices.createReminder(
-        res.userId,
+        req.userId,
         hourmins[0],
         hourmins[1]
       );
@@ -369,12 +369,12 @@ const changeemail = async (req, res) => {
   const { email } = req.body;
   try {
     let user = await userServices.findUserByOne("email", email);
-  if (user) {
-    return res.status(400).json({
-      status: "error",
-      message: "Email already exists",
-    });
-  }
+    if (user) {
+      return res.status(400).json({
+        status: "error",
+        message: "Email already exists",
+      });
+    }
     user = await userServices.findUserByOne("_id", req.userId);
     user.verified = false;
     user.email = email;
@@ -385,7 +385,7 @@ const changeemail = async (req, res) => {
     return res.status(200).json({
       status: "success",
       message: "OTP successfully sent",
-      data: {email}
+      data: { email },
     });
   } catch (err) {
     logger.error("user/changeemail: ", err);

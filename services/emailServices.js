@@ -242,7 +242,7 @@ const sendRemUserEmail = async (useremail, username) => {
         <p>Ignore this message if you have already been logged your reminder for this time.</p>
       </section>
     </div>`;
-    await sendEmail(user_email, subject, "", html);
+    await sendEmail(useremail, subject, "", html);
   } catch (err) {
     logger.error("Error occured while sending failure email: ", err.message);
     throw err;
