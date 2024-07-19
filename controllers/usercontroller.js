@@ -313,16 +313,16 @@ const profilePicture = async (req, res) => {
 const personalinfopost = async (req, res, next) => {
   const { fullname, username, phonenumber } = req.body;
   try {
-    user = await userServices.findUserByOne("_id", req.userId);
+    let user = await userServices.findUserByOne("_id", req.userId);
     let usersname = await userServices.findUserByOne("username", username);
-    if (usersname && !(usersname == user)) {
+    if (usersname && !(usersname.username == user.username)) {
       return res.status(400).json({
         status: "error",
         message: "Username is already taken",
       });
     }
     let userphone = await userServices.findUserByOne("phonenumber", phonenumber);
-    if (userphone && !(userphone == user)) {
+    if (userphone && !(usersname.phonenumber == user.phonenumber)) {
       return res.status(400).json({
         status: "error",
         message: "Phonenumber is already taken",
