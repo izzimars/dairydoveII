@@ -63,9 +63,12 @@ const filter = async (req, res, next) => {
   const paginationLimit = limit || 12;
   const paginationPage = page || 1;
   try {
+    const endDateObj = new Date(endDate);
+    endDateObj.setDate(endDateObj.getDate() + 1);
+    const incrementedEndDate = endDateObj.toISOString().split('T')[0];
     const diaries = await diaryServices.findUserDiaries({
       userId: req.userId,
-      date: { $gte: new Date(startDate), $lte: new Date(endDate) },
+      date: { $gte: new Date(startDate), $lte: new Date(incrementedEndDate) },
     });
     return res.status(200).json({
       status: "success",

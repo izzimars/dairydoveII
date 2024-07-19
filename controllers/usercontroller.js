@@ -47,7 +47,7 @@ const signup = async (req, res, next) => {
     res.status(200).json({
       status: "PENDING",
       message: "Verification OTP sent",
-      data: email,
+      data: { email },
     });
   } catch (err) {
     logger.error("Authentication/Signup:", err);
@@ -121,7 +121,7 @@ const resendOTPCode = async (req, res, next) => {
     return res.status(200).json({
       status: "success",
       message: "User email verified successfully",
-      data: email,
+      data: {email},
     });
   } catch (err) {
     logger.error("Authentication/Verify:", err);
@@ -156,18 +156,20 @@ const login = async (req, res, next) => {
     const token = jwt.sign({ userId: user._id }, config.SECRET, {
       expiresIn: "3h",
     });
+    const refreshtoken = jwt.sign({ userId: user._id }, config.SECRET, {
+      expiresIn: "7h",
+    });
     user.token = token;
     await user.save();
     return res.status(200).json({
       status: "success",
       message: "user signed in successfully",
-      data: [
-        {
-          token: token,
-          username: user.username,
-          email: user.email,
-          setup: user.setup,
-        },
+      data: [        
+          {token: token},
+          {refreshtoken:refreshtoken},
+          {username: user.username},
+          {email: user.email},
+          {setup: user.setup},        
       ],
     });
   } catch (err) {
@@ -182,7 +184,6 @@ const forgotPassword = async (req, res, next) => {
     const user = await userServices.findUserByOne("email", email);
     if (user) {
       user.verified = false;
-      user.token = null;
       await user.save();
       logger.info(`Send token to reset password to ${user._id}`);
       await otpServices.deleteUserOtpsByUserId(user._id);
@@ -190,8 +191,8 @@ const forgotPassword = async (req, res, next) => {
       await emailServices.sendOtpEmail(user.email, otp);
       return res.status(200).json({
         status: "success",
-        message: "User email verified successfully",
-        data: email,
+        message: "OTP sent successfully",
+        data: {email},
       });
     } else {
       const error = new Error("Email Does Not Exist");
@@ -384,6 +385,7 @@ const changeemail = async (req, res) => {
     return res.status(200).json({
       status: "success",
       message: "OTP successfully sent",
+      data: {email}
     });
   } catch (err) {
     logger.error("user/changeemail: ", err);
@@ -432,8 +434,6 @@ const changeemailverify = async (req, res) => {
 const logout = async (req, res) => {
   try {
     const user = await userServices.findUserByOne("_id", req.userId);
-    user.token = null;
-    await user.save();
     return res.status(200).json({
       status: "success",
       message: "User successfully logged out",

@@ -5,7 +5,7 @@ const signupSchema = Joi.object({
   username: Joi.string().min(3).required(),
   email: Joi.string().email().required(),
   phonenumber: Joi.string()
-    .pattern(/^\+?[1-9]\d{1,14}$/)
+    .pattern(/^(\(+|0)[1-9]\d{1,14}$/)
     .message({
       "string.pattern.base":
         "Phone number must be a valid international format",
@@ -24,7 +24,7 @@ const personalInfoSchema = Joi.object({
   fullname: Joi.string().min(3).max(50).optional(),
   username: Joi.string().min(3).optional(),
   phonenumber: Joi.string()
-    .pattern(/^\+?[1-9]\d{1,14}$/)
+    .pattern(/^(\(+|0)[1-9]\d{1,14}$/)
     .message({
       "string.pattern.base":
         "Phone number must be a valid international format",

@@ -25,12 +25,16 @@ const googleAuthCallback = async (req, res, next) => {
         expiresIn: "7h",
       });
       // Send the token, email, and username as response
-      res.status(200).json({
+      return res.status(200).json({
         status: "success",
-        token,
-        refreshtoken,
-        email: user.email,
-        username: user.username,
+        message: "user signed in successfully",
+        data: [        
+            {token: token},
+            {refreshtoken:refreshtoken},
+            {username: user.username},
+            {email: user.email},
+            {setup: user.setup},        
+        ],
       });
     })(req, res, next);
   } catch (err) {
