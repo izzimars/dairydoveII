@@ -8,7 +8,7 @@ passport.use(
     {
       clientID: config.CLIENTID,
       clientSecret: config.CLIENTSECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback",
+      callbackURL: "https://dairydoveii.onrender.com/auth/google/callback",
       //scope: ["profile", "email"],
     },
     async (accessToken, refreshToken, profile, done) => {
