@@ -1,6 +1,5 @@
-const express = require("express");
 const reminderBot = require("./reminderbots");
-const remindersroute = express.Router();
+const logger = require("../utils/logger");
 const reminderServices = require("../services/reminderServices");
 
 // getting all reminders
@@ -26,15 +25,17 @@ const addReminders = async (req, res, next) => {
   try {
     let timeArr = [];
     let convDbArr = [];
-    let dbArr = await reminderServices.findReminderById(req.userId);
+    let dbArr = await reminderServices.findUserReminder({ userId: req.userId });
     for (const time of reminders) {
-      let arr = reminderBot.timeSplitter(time);
+      let arr = await reminderBot.timeSplitter(time);
       timeArr.push(arr);
     }
     for (let i = 0; i < dbArr.length; i++) {
       let arr = [dbArr[i].hour, dbArr[i].time];
       convDbArr.push(arr);
     }
+    console.log(timeArr);
+    console.log(convDbArr);
     for (let i = 0; i < timeArr.length; i++) {
       let flag = false;
       for (let j = 0; j < convDbArr.length; j++) {
@@ -54,12 +55,14 @@ const addReminders = async (req, res, next) => {
     if (newreminders.length != 0) {
       var suc = 0;
       for (const time of newreminders) {
-        let hourmins = remainderBot.timeSplitter(time);
-        await reminderServices.createReminder(
-          res.userId,
+        let hourmins = await reminderBot.timeSplitter(time);
+        let newReminder = await reminderServices.createReminder(
+          req.userId,
           hourmins[0],
           hourmins[1]
         );
+        await reminderBot.scheduleReminder(newReminder);
+        logger.info(`The reminder has been set for ${newReminder._id}`);
         suc += 1;
       }
       return res.status(200).json({
@@ -81,9 +84,8 @@ const addReminders = async (req, res, next) => {
 
 //delete a reminder
 const deleteReminders = async (req, res, next) => {
-  const reminderId = req.params;
   try {
-    await reminderServices.deleteReminder(reminderId);
+    await reminderServices.deleteReminder({ _id: req.params.id });
     return res.status(200).json({
       status: "success",
       message: "Reminder successfully deleted",

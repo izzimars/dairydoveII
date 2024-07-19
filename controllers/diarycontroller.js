@@ -1,9 +1,3 @@
-const express = require("express");
-const { dateSchema, getDiarySchema, postSchema } = require("../utils/validate");
-//const User = require("../models/user");
-const diaryrouter = express.Router();
-const middleware = require("../utils/middleware");
-const validate = require("../utils/validate");
 const logger = require("../utils/logger");
 const cron = require("node-cron");
 const diaryServices = require("../services/diaryServices");

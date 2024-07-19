@@ -1,5 +1,6 @@
 const Reminder = require("../models/remindermodel");
 const logger = require("../utils/logger");
+const schedule = require("node-schedule");
 
 const findReminderById = async (remId) => {
   try {
@@ -14,10 +15,9 @@ const findReminderById = async (remId) => {
   }
 };
 
-const findReminderByOne = async (remId) => {
+const findUserReminder = async (value) => {
   try {
-    const rem = await Reminder.findOne({ remId });
-    logger.info(`Remainder ${remId._id} successfully found`);
+    const rem = await Reminder.find(value);
     return rem;
   } catch (err) {
     logger.info(err.message);
@@ -47,13 +47,15 @@ const createReminder = async (userId, hour, mins) => {
 
 const deleteReminder = async (reminderId) => {
   try {
-    const reminder = await Reminder.findOne({ reminderId });
-    const job = schedule.scheduledJobs[reminder._id];
-    if (job) {
-      job.cancel();
+    const reminder = await Reminder.find(reminderId);
+    if (!reminder) {
+      const job = schedule.scheduledJobs[reminder._id];
+      if (job) {
+        job.cancel();
+      }
+      await Reminder.findByIdAndDelete(reminder._id);
+      logger.info(`Reminder ${reminder._id} deleted.`);
     }
-    await Reminder.findByIdAndDelete(reminder._id);
-    logger.info(`Reminder ${newReminder._id} deleted.`);
   } catch (err) {
     logger.info(err.message);
     const error = new Error("Internal Server Error");
@@ -63,7 +65,7 @@ const deleteReminder = async (reminderId) => {
 };
 
 module.exports = {
-  findReminderByOne,
+  findUserReminder,
   findReminderById,
   createReminder,
   deleteReminder,

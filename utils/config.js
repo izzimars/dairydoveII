@@ -10,6 +10,7 @@ const CLOUD_API_KEY = process.env.CLOUD_API_KEY;
 const CLOUD_API_SECRET = process.env.CLOUD_API_SECRET;
 const CLIENTID = process.env.CLIENTID;
 const CLIENTSECRET = process.env.CLIENTSECRET;
+const CLIENTPASSWORD = process.env.CLIENTPASSWORD;
 
 module.exports = {
   MONGODB_URI,
@@ -22,4 +23,5 @@ module.exports = {
   CLOUD_API_SECRET,
   CLIENTSECRET,
   CLIENTID,
+  CLIENTPASSWORD,
 };

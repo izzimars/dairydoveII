@@ -14,8 +14,6 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         // Find or create user in your database
-        console.log(profile);
-        console.log(profile.emails[0].value);
         let user = await userServices.findUserByOne(
           "email",
           profile.emails[0].value
@@ -25,7 +23,7 @@ passport.use(
             username: profile.displayName,
             fullname: profile.displayName,
             email: profile.emails[0].value,
-            password: "default_password", // Provide a default or random password
+            password: config.CLIENTPASSWORD, // Provide a default or random password
             phonenumber: "0000000000", // Provide a default phone number if needed
           });
         }

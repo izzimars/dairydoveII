@@ -5,9 +5,7 @@ const userServices = require("../services/userService");
 
 const verifyToken = async (req, res, next) => {
   let t2 = req.headers["authorization"].replace("Bearer ", "");
-  console.log(t2);
   const token = req.header("Authorization").replace("Bearer ", "");
-  console.log(token);
   if (!token) {
     return res.status(403).json({
       status: "error",
