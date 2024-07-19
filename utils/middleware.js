@@ -4,7 +4,10 @@ const jwt = require("jsonwebtoken");
 const userServices = require("../services/userService");
 
 const verifyToken = async (req, res, next) => {
+  let t2 = req.headers["authorization"].replace("Bearer ", "");
+  console.log(t2);
   const token = req.header("Authorization").replace("Bearer ", "");
+  console.log(token);
   if (!token) {
     return res.status(403).json({
       status: "error",
@@ -14,7 +17,7 @@ const verifyToken = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, config.SECRET);
     const user = await userServices.findUserByOne("_id", decoded.userId);
-    if (!user || user.token != token) {
+    if (!user) {
       return res.status(403).json({
         status: "error",
         message: "Failed to authenticate token",
@@ -23,33 +26,27 @@ const verifyToken = async (req, res, next) => {
     req.userId = decoded.userId;
     next();
   } catch (err) {
-    if (err.name === "TokenExpiredError") {
-      const expdecoded = jwt.decode(token);
-      if (expdecoded.userId) {
-        try {
-          let expuser = await userServices.findUserByOne(
-            "_id",
-            expdecoded.userId
-          );
-          expuser.token = null;
-          await expuser.save();
-          return res.status(401).json({
-            status: "error",
-            message: "Token has expired. Please log in again.",
-          });
-        } catch (err) {
-          logger.info(err.message);
-          return res.status(500).json({
-            status: "error",
-            message: "Internal Server Error",
-          });
-        }
-      }
-    }
+    // if (err.name === "TokenExpiredError") {
+    //   const expdecoded = jwt.decode(token);
+    //   if (expdecoded.userId) {
+    //     try {
+    //       let expuser = await userServices.findUserByOne(
+    //         "_id",
+    //         expdecoded.userId
+    //       );
+    //       expuser.token = null;
+    //       await expuser.save();
     return res.status(401).json({
       status: "error",
-      message: "Internal Server Error",
+      message: "Invalid token or expired token.",
     });
+    // } catch (err) {
+    //   logger.info(err.message);
+    //   return res.status(500).json({
+    //     status: "error",
+    //     message: "Internal Server Error",
+    //   });
+    // }
   }
 };
 

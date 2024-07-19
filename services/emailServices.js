@@ -131,6 +131,7 @@ const sendEmail = async (
       },
     });
     await transporter.sendMail(mailOptions);
+    logger.info("email is sent succesfully");
   } catch (err) {
     logger.error(err.message);
     const error = new Error("Internal Server Error");
@@ -155,7 +156,6 @@ const sendOtpEmail = async (user_email, otp) => {
         </section>
       </div>`;
     await sendEmail(user_email, subject, "", html);
-    console.log(otp);
   } catch (err) {
     logger.error(err.message);
     throw err;
@@ -191,6 +191,18 @@ const sendFaiUserEmail = async (user_email) => {
     const subject = "An error occured";
     const logoURL = `https://res.cloudinary.com/dwykmvdhb/image/upload/v1721222788/xn1fblohfrvwopzcmaq3.png`;
     const html = `<p>Error occured on the server please resend your diary or log in to diary dove to log in app </p>`;
+    await sendEmail(user_email, subject, "", html);
+  } catch (err) {
+    logger.error("Error occured while sending failure email: ", err.message);
+    throw err;
+  }
+};
+
+const sendRemUserEmail = async (useremail, username) => {
+  try {
+    const subject = "Daily Reminder";
+    const logoURL = `https://res.cloudinary.com/dwykmvdhb/image/upload/v1721222788/xn1fblohfrvwopzcmaq3.png`;
+    const html = `<p></p>`;
     await sendEmail(user_email, subject, "", html);
   } catch (err) {
     logger.error("Error occured while sending failure email: ", err.message);

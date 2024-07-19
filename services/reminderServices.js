@@ -36,6 +36,7 @@ const createReminder = async (userId, hour, mins) => {
     });
     await newReminder.save();
     logger.info(`Reminder saved for ${newReminder._id}`);
+    return newReminder;
   } catch (err) {
     logger.info(err.message);
     const error = new Error("Internal Server Error");
