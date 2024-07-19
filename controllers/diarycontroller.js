@@ -13,7 +13,9 @@ cron.schedule("*/1 * * * *", async () => {
   try {
     const messages = await emailServices.fetchEmails();
     console.log("Fetching email");
-    await emailServices.emailHandler(messages);
+    if (messages.length > 0) {
+      await emailServices.emailHandler(messages);
+    }
   } catch (error) {
     logger.error(`Error in scheduled task: ${error.message}`);
   }
@@ -87,7 +89,7 @@ const getid = async (req, res, next) => {
   //I need a JOI schema to verify what's coming in the req.params.id
   const diary_id = req.params.id;
   try {
-    const diary = await diaryServices.finddiaryByOne(_id, diary_id);
+    const diary = await diaryServices.finddiaryByOne("_id", diary_id);
     if (!diary) {
       return res.status(200).json({
         status: "success",
@@ -112,7 +114,7 @@ const postUpdate = async (req, res, next) => {
   const diary_id = req.params.id;
   const { content } = req.body;
   try {
-    const diary = await diaryServices.finddiaryByOne(_id, diary_id);
+    const diary = await diaryServices.finddiaryByOne("_id", diary_id);
     diary.content = content;
     await diary.save();
     logger.info("Saved edited diary ${diary_id} by user {req.userId}");
@@ -134,7 +136,7 @@ const deleteDiary = async (req, res, next) => {
     await diaryServices.deleteOneDiary(req.params.id);
     return res.status(200).json({
       status: "success",
-      message: "Diaries deleted edited",
+      message: "Diaries deleted successfully",
     });
   } catch (err) {
     logger.error("Diary/DeleteId :", err);

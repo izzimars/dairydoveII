@@ -10,7 +10,6 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   verified: { type: Boolean, default: false },
   setup: { type: Boolean, default: false },
-  token: { type: String, default: null },
   profilePicture: { type: String, required: false },
 });
 

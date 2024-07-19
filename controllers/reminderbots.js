@@ -10,18 +10,18 @@ const scheduleReminder = async (reminder) => {
     const rule = new schedule.RecurrenceRule();
     rule.hour = reminder.hour;
     rule.minute = reminder.time;
-    const user = await userServices.findUserByOne(reminder.userId);
+    const user = await userServices.findUserByOne("_id", reminder.userId);
     if (!user) {
       throw new Error(`User with ID ${reminder.user} not found`);
     }
     logger.info(
       `User found: ${user._id}, scheduling job for ${rule.hour}:${rule.minute}:${rule.second}`
     );
-    schedule.scheduleJob(rule, () => {
+    schedule.scheduleJob(rule, async () => {
       logger.info(`Reminder job running for user ${user._id}`);
       let text = `Hello ${user.username}, it is time for a new diary entry in your personal dove diary. \n 
         Make your new entries here and view them on your dashboard later.`;
-      emailServices.sendEmail(user.email, (subject = text));
+      await emailServices.sendEmail(user.email, "Daily Reminder", text, "");
     });
   } catch (error) {
     logger.error(`Error scheduling reminder: ${error}`);
@@ -61,4 +61,5 @@ const timeSplitter = async (time) => {
 module.exports = {
   timeSplitter,
   scheduleAllReminders,
+  scheduleReminder,
 };
