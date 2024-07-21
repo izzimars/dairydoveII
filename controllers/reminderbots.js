@@ -21,7 +21,7 @@ const scheduleReminder = async (reminder) => {
       logger.info(`Reminder job running for user ${user._id}`);
       const logoURL = `https://res.cloudinary.com/dwykmvdhb/image/upload/v1721222788/xn1fblohfrvwopzcmaq3.png`;
       const html = `
-        <div style="background-color: #f0f0f0; padding: 20px;">
+        <div style="background-color: #f0f0f0; padding: 20px;max-width: 640px;margin:auto;">
         <section style="max-width: 600px; margin: auto; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
           <div style="display:block;"><img src= "${logoURL}" alt="Diary Dove logo" style="width:43px; height:36px; display:inline;">
             <h1 style="color: #DA9658; display:inline; ">Dairy Dove</h2>
