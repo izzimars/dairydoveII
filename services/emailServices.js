@@ -80,12 +80,9 @@ const extractText = (item) => {
 const emailHandler = async (messages) => {
   for (const item of messages) {
     const [text, emailaddress] = extractText(item);
-    console.log(emailaddress);
     if (emailaddress) {
       try {
-        console.log(emailaddress);
         const user = await userServices.findUserByOne("email", emailaddress);
-        console.log(user);
         if (!user || !user.verified) {
           await sendNullUserEmail(emailaddress);
           logger.info(`A log was attempted by ${emailaddress}`);
