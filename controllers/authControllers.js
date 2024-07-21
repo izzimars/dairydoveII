@@ -24,16 +24,30 @@ const googleAuthCallback = async (req, res, next) => {
       const refreshtoken = jwt.sign({ userId: user._id }, config.SECRET, {
         expiresIn: "7h",
       });
+
+      const authData = JSON.stringify({
+        token,
+        refreshtoken,
+        username: user.username,
+        email: user.email,
+        setup: user.setup,
+      });
+
+      res.redirect(
+        `http://diary-dove-frontend.vercel.app/auth/callback?authData=${encodeURIComponent(
+          authData
+        )}`
+      );
       // Send the token, email, and username as response
       return res.status(200).json({
         status: "success",
         message: "user signed in successfully",
-        data: [        
-            {token: token},
-            {refreshtoken:refreshtoken},
-            {username: user.username},
-            {email: user.email},
-            {setup: user.setup},        
+        data: [
+          { token: token },
+          { refreshtoken: refreshtoken },
+          { username: user.username },
+          { email: user.email },
+          { setup: user.setup },
         ],
       });
     })(req, res, next);

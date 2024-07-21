@@ -60,6 +60,7 @@ const createDiaryWeb = async (diaryData) => {
 const deleteOneDiary = async (diaryData) => {
   try {
     const diary = await Diary.deleteOne({ _id: diaryData });
+    console.log(diary);
     logger.info(`Diary ${diary._id} successfully deleted`);
   } catch (err) {
     logger.info(err.message);
