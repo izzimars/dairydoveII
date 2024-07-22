@@ -48,13 +48,16 @@ const createReminder = async (userId, hour, mins) => {
 
 const deleteReminder = async (reminderId) => {
   try {
-    const reminder = await Reminder.find(reminderId);
-    if (!reminder) {
+    const reminder = await Reminder.findOne(reminderId);
+    console.log(reminder);
+    if (reminder) {
       const job = schedule.scheduledJobs[reminder._id];
+      console.log(job);
       if (job) {
         job.cancel();
       }
-      await Reminder.findByIdAndDelete(reminder._id);
+      const delt = await Reminder.findByIdAndDelete(reminder._id);
+      console.log(delt);
       logger.info(`Reminder ${reminder._id} deleted.`);
     }
   } catch (err) {
