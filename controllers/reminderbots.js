@@ -64,11 +64,13 @@ const scheduleAllReminders = async () => {
 // Example of adding a new reminder to the database
 const timeSplitter = async (time) => {
   let hour;
+  let temp_hour;
   const divTime = time.split(/[: ]/);
-  if (divTime[2] == "am") {
-    hour = Number(divTime[0]) + 1;
-  } else {
-    let temp_hour = Number(divTime[0]) + 13;
+  hour = Number(divTime[0]) + 1;
+  if (hour < 12) {
+    if (divTime[2] == "pm") {
+      temp_hour = Number(divTime[0]) + 12;
+    }
     hour = temp_hour < 24 ? temp_hour : 0;
   }
   return [hour, Number(divTime[1])];
