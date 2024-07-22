@@ -33,11 +33,13 @@ const googleAuthCallback = async (req, res, next) => {
         setup: user.setup,
       });
 
-      return res.redirect(
-        `http://diary-dove-frontend.vercel.app/auth/callback?authData=${encodeURIComponent(
-          authData
-        )}`
-      ).status(200);
+      return res
+        .status(200)
+        .redirect(
+          `http://diary-dove-frontend.vercel.app/auth/callback?authData=${encodeURIComponent(
+            authData
+          )}`
+        );
       // Send the token, email, and username as response
       // return res.status(200).json({
       //   status: "success",

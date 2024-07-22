@@ -63,28 +63,39 @@ const scheduleAllReminders = async () => {
 
 // Example of adding a new reminder to the database
 const timeSplitter = async (time) => {
-  let hour;
   const divTime = time.split(/[: ]/);
-  hour = Number(divTime[0]) + 1;
-  if (hour > 11) {
-    if (divTime[2] == "pm") {
-      hour = hour + 12;
-      if (hour > 24) {
-        logger.info("Invalid time format");
-        const error = new Error("Bad request, Invaid time");
-        error.status = 400;
-        throw error;
-      }
-    }
-    hour = hour < 24 ? hour : 0;
-  }
-  if (hour > 12 && divTime[2] == "am") {
-    logger.info("Invalid time format");
-    const error = new Error("Bad request, Invaid time");
+  let hour = Number(divTime[0]);
+  const minutes = Number(divTime[1]);
+  const period = divTime[2] ? divTime[2].toLowerCase() : null;
+  if (
+    isNaN(hour) ||
+    isNaN(minutes) ||
+    (period && period !== "am" && period !== "pm")
+  ) {
+    const error = new Error("Bad request, Invalid time format");
     error.status = 400;
     throw error;
   }
-  return [hour, Number(divTime[1])];
+  if (hour > 12 && period) {
+    const error = new Error("Bad request, Invalid time format");
+    error.status = 400;
+    throw error;
+  }
+  if (period === "pm" && hour !== 12) {
+    hour += 12;
+  } else if (period === "am" && hour === 12) {
+    hour = 0;
+  }
+  if (period === null && hour >= 24) {
+    const error = new Error("Bad request, Invalid time format");
+    error.status = 400;
+    throw error;
+  }
+  hour += 1;
+  if (hour >= 24) {
+    hour -= 24;
+  }
+  return [hour, minutes];
 };
 
 module.exports = {
