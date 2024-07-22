@@ -7,6 +7,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("../utils/config");
 const remainderBots = require("./reminderbots");
+const cloudinary = require("cloudinary").v2;
 const reminderServices = require("../services/reminderServices");
 
 const signup = async (req, res, next) => {
@@ -310,6 +311,36 @@ const profilePicture = async (req, res) => {
   }
 };
 
+const profilePictureDelete = async (req, res) => {
+  try {
+    const user = await userServices.findUserByOne("_id", req.userId);
+    if (!user) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found",
+      });
+    }
+    if (user.profilePicture) {
+      await cloudinary.uploader.destroy(user.profilePicture);
+    }
+    user.profilePicture = null; // Cloudinary file path
+    await user.save();
+    res.status(200).json({
+      status: "success",
+      message: "Profile picture successfully deleted",
+      data: {
+        profilePicture: user.profilePicture,
+      },
+    });
+  } catch (err) {
+    logger.error("Settings/profilePictureDelete: ", err);
+    if (err.status != 500) {
+      err.status = 500;
+    }
+    next(err);
+  }
+};
+
 const personalinfopost = async (req, res, next) => {
   const { fullname, username, phonenumber } = req.body;
   try {
@@ -455,6 +486,7 @@ module.exports = {
   setup,
   personalinfo,
   profilePicture,
+  profilePictureDelete,
   personalinfopost,
   changepassword,
   changeemail,

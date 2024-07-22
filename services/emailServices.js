@@ -174,7 +174,7 @@ const sendNullUserEmail = async (user_email) => {
         </div>
         <h3>Failed to save Diary</h3>
         <p>Either user is not registered or not verified, <b>Log into diary dove to rectify</b> </p>
-        <p>Ignore this message if you have already been verified.</p>
+        <p>Ignore this message if you did not send a diary entry.</p>
       </section>
     </div>`;
     await sendEmail(user_email, subject, "", html);
@@ -196,6 +196,7 @@ const sendSucUserEmail = async (user_email) => {
         </div>
         <h3>Diary successfully logged</h3>
         <p>Diary has been successfully logged.</p>
+        <p>Ignore this message if you did not send a diary entry.</p>
       </section>
     </div>`;
     await sendEmail(user_email, subject, "", html);
@@ -217,6 +218,7 @@ const sendFaiUserEmail = async (user_email) => {
         </div>
         <h3>An error occured</h3>
         <p>Error occured on the server please resend your diary or sign in to diary dove to log your entry </p>
+        <p>Ignore this message if you did not send a diary entry.</p>
       </section>
     </div>`;
     await sendEmail(user_email, subject, "", html);
@@ -239,7 +241,7 @@ const sendRemUserEmail = async (useremail, username) => {
         <h3>Daily Reminder</h3>
         <p>It is time to take a break and be one with your thoughts. Diary Dove is reminding you log a diary entry now.<br/>
         Reply this message or sign into the app to load your entry</p>
-        <p>Ignore this message if you have already been logged your reminder for this time.</p>
+        <p>Ignore this message if you have logged your entry for this time.</p>
       </section>
     </div>`;
     await sendEmail(useremail, subject, "", html);

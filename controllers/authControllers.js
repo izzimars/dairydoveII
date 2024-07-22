@@ -33,23 +33,23 @@ const googleAuthCallback = async (req, res, next) => {
         setup: user.setup,
       });
 
-      res.redirect(
+      return res.redirect(
         `http://diary-dove-frontend.vercel.app/auth/callback?authData=${encodeURIComponent(
           authData
         )}`
-      );
+      ).status(200);
       // Send the token, email, and username as response
-      return res.status(200).json({
-        status: "success",
-        message: "user signed in successfully",
-        data: [
-          { token: token },
-          { refreshtoken: refreshtoken },
-          { username: user.username },
-          { email: user.email },
-          { setup: user.setup },
-        ],
-      });
+      // return res.status(200).json({
+      //   status: "success",
+      //   message: "user signed in successfully",
+      //   data: [
+      //     { token: token },
+      //     { refreshtoken: refreshtoken },
+      //     { username: user.username },
+      //     { email: user.email },
+      //     { setup: user.setup },
+      //   ],
+      // });
     })(req, res, next);
   } catch (err) {
     return res.status(500).json({

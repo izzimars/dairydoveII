@@ -58,6 +58,12 @@ userrouter.post(
   userController.profilePicture
 );
 
+userrouter.delete(
+  "/profilePicture",
+  middleware.verifyToken,
+  userController.profilePictureDelete
+);
+
 userrouter.post(
   "/personalinfo",
   validate(schema.personalInfoSchema),

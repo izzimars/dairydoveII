@@ -29,7 +29,7 @@ const scheduleReminder = async (reminder) => {
           <h3>Daily Reminder</h3>
           <p>It is time to take a break and be one with your thoughts. Diary Dove is reminding you log a diary entry now.<br/>
           Reply this message or sign into the app to load your entry</p>
-          <p>Ignore this message if you have already been logged your reminder for this time.</p>
+          <p>Ignore this message if you have logged your entry for this time.</p>
         </section>
       </div>`;
       await emailServices.sendEmail(
