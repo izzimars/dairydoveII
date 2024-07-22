@@ -66,9 +66,9 @@ const timeSplitter = async (time) => {
   let hour;
   const divTime = time.split(/[: ]/);
   if (divTime[2] == "am") {
-    hour = Number(divTime[0]);
+    hour = Number(divTime[0]) + 1;
   } else {
-    let temp_hour = Number(divTime[0]) + 12;
+    let temp_hour = Number(divTime[0]) + 13;
     hour = temp_hour < 24 ? temp_hour : 0;
   }
   return [hour, Number(divTime[1])];
