@@ -76,8 +76,7 @@ const addReminders = async (req, res, next) => {
       });
     }
   } catch (err) {
-    console.error("Error adding reminders", err);
-    logger.error("Diary/Post:", err);
+    logger.error("Reminder/Addnew:", err);
     next(err);
   }
 };
@@ -91,8 +90,7 @@ const deleteReminders = async (req, res, next) => {
       message: "Reminder successfully deleted",
     });
   } catch (err) {
-    console.error("Error deleting reminders", err);
-    logger.error("Diary/Post:", err);
+    logger.error("Reminders/deleteReminders:", err);
     next(err);
   }
 };

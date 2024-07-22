@@ -64,14 +64,25 @@ const scheduleAllReminders = async () => {
 // Example of adding a new reminder to the database
 const timeSplitter = async (time) => {
   let hour;
-  let temp_hour;
   const divTime = time.split(/[: ]/);
   hour = Number(divTime[0]) + 1;
   if (hour > 11) {
     if (divTime[2] == "pm") {
-      temp_hour = Number(divTime[0]) + 12;
+      hour = hour + 12;
+      if (hour > 24) {
+        logger.info("Invalid time format");
+        const error = new Error("Bad request, Invaid time");
+        error.status = 400;
+        throw error;
+      }
     }
-    hour = temp_hour < 24 ? temp_hour : 0;
+    hour = hour < 24 ? hour : 0;
+  }
+  if (hour > 12 && divTime[2] == "am") {
+    logger.info("Invalid time format");
+    const error = new Error("Bad request, Invaid time");
+    error.status = 400;
+    throw error;
   }
   return [hour, Number(divTime[1])];
 };

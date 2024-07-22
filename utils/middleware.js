@@ -79,6 +79,11 @@ const errorHandler = (error, request, response, next) => {
       status: "error",
       message: "Internal Server Error",
     });
+  } else if (error.status == 400) {
+    return response.status(400).json({
+      status: "error",
+      message: error.message,
+    });
   } else if (error.status == 404) {
     return response.status(500).json({
       status: "error",
