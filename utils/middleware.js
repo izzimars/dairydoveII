@@ -4,15 +4,14 @@ const jwt = require("jsonwebtoken");
 const userServices = require("../services/userService");
 
 const verifyToken = async (req, res, next) => {
-  let t2 = req.headers["authorization"].replace("Bearer ", "");
-  const token = req.header("Authorization").replace("Bearer ", "");
-  if (!token) {
-    return res.status(403).json({
-      status: "error",
-      message: "No token provided",
-    });
-  }
   try {
+    const token = req.header("Authorization").replace("Bearer ", "");
+    if (!token) {
+      return res.status(403).json({
+        status: "error",
+        message: "No token provided",
+      });
+    }
     const decoded = jwt.verify(token, config.SECRET);
     const user = await userServices.findUserByOne("_id", decoded.userId);
     if (!user) {
