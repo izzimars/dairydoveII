@@ -4,6 +4,7 @@ const config = require("../utils/config");
 const imaps = require("imap-simple");
 const userServices = require("../services/userService");
 const diaryServices = require("../services/diaryServices");
+const { convert } = require("html-to-text");
 
 //email reciever configuration
 const emailconfig = {
@@ -69,6 +70,8 @@ const extractText = (item) => {
         text = text.join("\n");
       }
       text = text.trim();
+    } else if (rawEmailContentText.includes("Sent from my iPhone")) {
+      text = String(rawEmailContentText.split("Sent from my iPhone")[0]);
     } else {
       text = rawEmailContentText.trim();
     }
@@ -78,6 +81,7 @@ const extractText = (item) => {
 };
 
 const emailHandler = async (messages) => {
+  logger.info("processing a message");
   for (const item of messages) {
     const [text, emailaddress] = extractText(item);
     if (emailaddress) {
