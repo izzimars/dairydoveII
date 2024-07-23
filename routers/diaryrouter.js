@@ -21,20 +21,22 @@ diaryrouter.get(
 
 diaryrouter.get(
   "/filter",
-  validate(schema.dateSchema),
+  validate(schema.dateSchema, "query"),
   middleware.verifyToken,
   diaryController.filter
 );
 
-diaryrouter.get("/:id",
+diaryrouter.get(
+  "/:id",
   validate(schema.mongodbSchema, "params"),
-  middleware.verifyToken, 
+  middleware.verifyToken,
   diaryController.getid
 );
 
-diaryrouter.patch("/:id", 
+diaryrouter.patch(
+  "/:id",
   validate(schema.mongodbSchema, "params"),
-  middleware.verifyToken, 
+  middleware.verifyToken,
   diaryController.postUpdate
 );
 

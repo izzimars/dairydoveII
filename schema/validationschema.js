@@ -73,14 +73,27 @@ const newPasswordSchema = Joi.object({
   }),
 });
 
+const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+
 const dateSchema = Joi.object({
-  startDate: Joi.date().required(),
-  endDate: Joi.date().min(Joi.ref("startDate")).required().messages({
-    "date.min": "End date must be greater than or equal to start date",
+  startDate: Joi.string().pattern(datePattern).required().messages({
+    "string.pattern.base": "Start date must be in YYYY-MM-DD format",
+  }),
+  endDate: Joi.string().pattern(datePattern).required().messages({
+    "string.pattern.base": "End date must be in YYYY-MM-DD format",
+    "any.only": "End date must be greater than or equal to start date",
   }),
   limit: Joi.number().integer().min(1).default(12),
   page: Joi.number().integer().min(1).default(1),
-});
+}).custom((value, helpers) => {
+  const { startDate, endDate } = value;
+  if (new Date(startDate) > new Date(endDate)) {
+    return helpers.message(
+      "End date must be greater than or equal to start date"
+    );
+  }
+  return value;
+}, "Date validation");
 
 const getDiarySchema = Joi.object({
   limit: Joi.number().integer().min(1).default(12),
@@ -135,11 +148,10 @@ const changeemailVerifySchema = Joi.object({
 const mongoobjectIdPattern = /^[0-9a-fA-F]{24}$/;
 
 const mongodbSchema = Joi.object({
-    id: Joi.string().pattern(mongoobjectIdPattern).required().messages({
-        'string.pattern.base': 'Invalid MongoDB ObjectID',
-    }),
+  id: Joi.string().pattern(mongoobjectIdPattern).required().messages({
+    "string.pattern.base": "Invalid MongoDB ObjectID",
+  }),
 });
-
 
 module.exports = {
   signupSchema,
@@ -156,5 +168,5 @@ module.exports = {
   changeemailVerifySchema,
   getDiarySchema,
   postSchema,
-  mongodbSchema
+  mongodbSchema,
 };

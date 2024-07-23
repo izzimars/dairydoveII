@@ -30,6 +30,26 @@ const findUserDiaries = async (value, paginationLimit, paginationPage) => {
   }
 };
 
+const findUserDiariesFilter = async (
+  userId,
+  filter,
+  paginationLimit,
+  paginationPage
+) => {
+  try {
+    const diaries = await Diary.find({ userId, ...filter })
+      .sort({ date: -1 })
+      .limit(paginationLimit)
+      .skip((paginationPage - 1) * paginationLimit);
+    return diaries;
+  } catch (err) {
+    logger.info(err.message);
+    const error = new Error("Internal Server Error");
+    error.status = 500;
+    throw error;
+  }
+};
+
 const createDiary = async (diaryData) => {
   try {
     const diary = await new Diary(diaryData);
@@ -86,6 +106,7 @@ module.exports = {
   createDiary,
   createDiaryWeb,
   findUserDiaries,
+  findUserDiariesFilter,
   deleteOneDiary,
   //updatediaryByOne,
 };

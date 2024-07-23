@@ -59,17 +59,26 @@ const diaryget = async (req, res, next) => {
 
 // Filter Diary Entries by Date Range
 const filter = async (req, res, next) => {
-  const { startDate, endDate, limit, page } = req.body;
-  const paginationLimit = limit || 12;
-  const paginationPage = page || 1;
+  let { startDate, endDate, limit, page } = req.query;
+  const limitInt = parseInt(limit, 10);
+  const pageInt = parseInt(page, 10);
   try {
     const endDateObj = new Date(endDate);
     endDateObj.setDate(endDateObj.getDate() + 1);
-    const incrementedEndDate = endDateObj.toISOString().split("T")[0];
-    const diaries = await diaryServices.findUserDiaries({
-      userId: req.userId,
-      date: { $gte: new Date(startDate), $lte: new Date(incrementedEndDate) },
-    });
+    const incrementedEndDateISO = endDateObj.toISOString();
+    startDate = new Date(startDate).toISOString();
+    const filterCriteria = {
+      date: {
+        $gte: new Date(startDate),
+        $lte: new Date(incrementedEndDateISO),
+      },
+    };
+    const diaries = await diaryServices.findUserDiariesFilter(
+      req.userId,
+      filterCriteria,
+      limitInt,
+      pageInt
+    );
     return res.status(200).json({
       status: "success",
       message: "Diaries succesfully retrieved",
