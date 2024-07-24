@@ -18,6 +18,7 @@ passport.use(
           "email",
           profile.emails[0].value
         );
+        console.log("email ", profile.emails[0].value);
         if (!user) {
           user = await userServices.createUser({
             username: profile.displayName,
