@@ -13,10 +13,11 @@ const googleAuthCallback = async (req, res, next) => {
   try {
     passport.authenticate("google", { session: false }, async (err, user) => {
       if (err || !user) {
-        return res.status(401).json({
-          status: "error",
-          message: "Authentication failed",
-        });
+        return res
+          .status(200)
+          .redirect(
+            `http://diary-dove-frontend.vercel.app/auth/callback?status=error&message=Authentication%20failed`
+          );
       }
       const token = jwt.sign({ userId: user._id }, config.SECRET, {
         expiresIn: "3h",
@@ -54,10 +55,13 @@ const googleAuthCallback = async (req, res, next) => {
       // });
     })(req, res, next);
   } catch (err) {
-    return res.status(500).json({
-      status: "error",
-      message: "Internal Server Error",
-    });
+    const errorStatus = "error";
+    const errorMessage = encodeURIComponent("Internal Server Error");
+    return res
+      .status(500)
+      .redirect(
+        `http://diary-dove-frontend.vercel.app/auth/callback?status=${errorStatus}&message=${errorMessage}`
+      );
   }
 };
 
