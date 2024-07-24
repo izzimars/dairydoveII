@@ -25,7 +25,6 @@ passport.use(
             fullname: profile.displayName,
             email: profile.emails[0].value,
             password: config.CLIENTPASSWORD, // Provide a default or random password
-            phonenumber: "0000000000", // Provide a default phone number if needed
           });
         }
         return done(null, user);
