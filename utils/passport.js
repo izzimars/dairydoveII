@@ -24,7 +24,7 @@ passport.use(
             fullname: profile.displayName,
             email: profile.emails[0].value,
             password: config.CLIENTPASSWORD, // Provide a default or random password
-            phonenumber: null, // Provide a default phone number if needed
+            phonenumber: "null", // Provide a default phone number if needed
             verified: true,
           });
         }
