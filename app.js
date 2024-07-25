@@ -14,14 +14,19 @@ const app = express();
 const session = require("express-session");
 const passport = require("passport");
 const authRoutes = require("./routers/authrouters.js");
+const redisClient = require("./utils/reddisConnection.js");
 require("./utils/passport");
 
+//DATABASES
 mongoose.set("strictQuery", false);
 mongoose
   .connect(config.MONGODB_URI, {})
   .then(() => logger.info("MongoDB connected"))
   .catch((err) => logger.error("MongoDB connection error:", err));
 
+(async () => {
+  await redisClient.connect();
+})();
 //middleware for requests before routes access
 Sentry.setupExpressErrorHandler(app);
 

@@ -11,9 +11,12 @@ const CLOUD_API_SECRET = process.env.CLOUD_API_SECRET;
 const CLIENTID = process.env.CLIENTID;
 const CLIENTSECRET = process.env.CLIENTSECRET;
 const CLIENTPASSWORD = process.env.CLIENTPASSWORD;
-const ID_INSTANCE= process.env.ID_INSTANCE;
-const API_URL= process.env.API_URL;
-const API_TOKEN_INSTANCE= process.env.API_TOKEN_INSTANCE;
+const ID_INSTANCE = process.env.ID_INSTANCE;
+const API_URL = process.env.API_URL;
+const API_TOKEN_INSTANCE = process.env.API_TOKEN_INSTANCE;
+const REDISHOSTNAME = process.env.REDISHOSTNAME;
+const REDISPORT = process.env.REDISPORT;
+const REDISPASSWORD = process.env.REDISPASSWORD;
 
 module.exports = {
   MONGODB_URI,
@@ -29,5 +32,8 @@ module.exports = {
   CLIENTPASSWORD,
   ID_INSTANCE,
   API_URL,
-  API_TOKEN_INSTANCE
+  API_TOKEN_INSTANCE,
+  REDISHOSTNAME,
+  REDISPORT,
+  REDISPASSWORD,
 };

@@ -2,6 +2,7 @@ const logger = require("../utils/logger");
 const config = require("../utils/config");
 const jwt = require("jsonwebtoken");
 const userServices = require("../services/userService");
+const redisService = require("../services/redisService");
 
 const verifyToken = async (req, res, next) => {
   try {
@@ -21,29 +22,19 @@ const verifyToken = async (req, res, next) => {
       });
     }
     req.userId = decoded.userId;
+    let redistoken = await redisService.getArray(req.userId);
+    if (!(redistoken && redistoken.length > 0)) {
+      return res.status(403).json({
+        status: "error",
+        message: "Expired or Invalid token",
+      });
+    }
     next();
   } catch (err) {
-    // if (err.name === "TokenExpiredError") {
-    //   const expdecoded = jwt.decode(token);
-    //   if (expdecoded.userId) {
-    //     try {
-    //       let expuser = await userServices.findUserByOne(
-    //         "_id",
-    //         expdecoded.userId
-    //       );
-    //       expuser.token = null;
-    //       await expuser.save();
     return res.status(401).json({
       status: "error",
       message: "Invalid token or expired token.",
     });
-    // } catch (err) {
-    //   logger.info(err.message);
-    //   return res.status(500).json({
-    //     status: "error",
-    //     message: "Internal Server Error",
-    //   });
-    // }
   }
 };
 

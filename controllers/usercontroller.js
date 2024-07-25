@@ -9,6 +9,7 @@ const config = require("../utils/config");
 const remainderBots = require("./reminderbots");
 const cloudinary = require("cloudinary").v2;
 const reminderServices = require("../services/reminderServices");
+const redisService = require("../services/redisService");
 
 const signup = async (req, res, next) => {
   const { fullname, username, email, phonenumber, password } = req.body;
@@ -160,8 +161,7 @@ const login = async (req, res, next) => {
     const refreshtoken = jwt.sign({ userId: user._id }, config.SECRET, {
       expiresIn: "7h",
     });
-    user.token = token;
-    await user.save();
+    await redisService.setArray(user._id.toString(), [token, refreshtoken]);
     return res.status(200).json({
       status: "success",
       message: "user signed in successfully",
@@ -456,7 +456,7 @@ const changeemailverify = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    const user = await userServices.findUserByOne("_id", req.userId);
+    await redisService.delArray(req.userId);
     return res.status(200).json({
       status: "success",
       message: "User successfully logged out",

@@ -1,6 +1,7 @@
 const passport = require("passport");
 const config = require("../utils/config");
 const jwt = require("jsonwebtoken");
+const redisService = require("../services/redisService");
 
 const googleAuth = passport.authenticate("google", {
   scope: [
@@ -25,7 +26,7 @@ const googleAuthCallback = async (req, res, next) => {
       const refreshtoken = jwt.sign({ userId: user._id }, config.SECRET, {
         expiresIn: "7h",
       });
-
+      await redisService.setArray(id, [token, refreshtoken]);
       const authData = JSON.stringify({
         token,
         refreshtoken,
