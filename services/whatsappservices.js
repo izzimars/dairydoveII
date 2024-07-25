@@ -31,6 +31,20 @@ const sendMessage = async (user_number, message) => {
   }
 };
 
+
+//checkWhatapp
+const checkWhatapp = async (user_number) => {
+    try {
+      const url = `${apiurl}/waInstance${idInstance}/checkWhatsapp/${apiTokenInstance}`;
+      const payload = { phoneNumber: user_number};
+      const headers = { "Content-Type": "application/json" };
+      const response = await axios.post(url, payload, { headers: headers });
+      logger.info(response.data);
+    } catch (err) {
+      logger.error(err.message);
+    }
+  };
+
 // Doings scene
 let diaryContent = "";
 const doingsScene = new Scene("doings");
@@ -159,10 +173,11 @@ const sendFaiMes = async (user_number) => {
   }
 };
 
-sendReminderBot(2349075857450, "Segun");
+// sendReminderBot(2349075857450, "Segun");
 startBot();
+//checkWhatapp(2349075857450)
 
 module.exports = {
-  sendOtpMessage,
-  sendReminderBot,
+  whatsappHandler,
+  checkWhatapp
 };
