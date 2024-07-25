@@ -41,8 +41,21 @@ const updateUserByOne = async (userId) => {
   }
 };
 
+const updateUserPhoneByOne = async (userId) => {
+  try {
+    const user = await User.updateOne({ _id: userId }, { whatsappverified: true });
+    logger.info(`User profile successfully updated ${userId}`);
+  } catch (err) {
+    logger.info(err.message);
+    const error = new Error("Internal Server Error");
+    error.status = 500;
+    throw error;
+  }
+};
+
 module.exports = {
   findUserByOne,
   createUser,
   updateUserByOne,
+  updateUserPhoneByOne
 };

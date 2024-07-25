@@ -16,6 +16,7 @@ userrouter.post(
 userrouter.post(
   "/sendphoneOTP",
   validate(schema.sendPhoneOTPSchema, "body"),
+  middleware.verifyToken,
   whatsappController.sendOTP
 );
 
@@ -28,6 +29,7 @@ userrouter.post(
 userrouter.post(
   "/verifyPhoneOTP",
   validate(schema.verifyPhoneOTPSchema, "body"),
+  middleware.verifyToken,
   whatsappController.verifyOTP
 );
 
@@ -40,7 +42,8 @@ userrouter.post(
 userrouter.post(
   "/resendphoneOTP",
   validate(schema.resendPhoneOTPSchema),
-  whatsappController.resendOTP
+  middleware.verifyToken,
+  whatsappController.sendOTP
 );
 
 userrouter.post("/login", validate(schema.loginSchema), userController.login);

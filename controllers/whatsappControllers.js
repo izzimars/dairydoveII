@@ -13,17 +13,25 @@ const whatsappServices = require('../services/whatsappservices');
 
 //Send OTP
 const sendOTP = async (req, res, next) => {
-    const {  phonenumber} = req.body;
+    const {  phonenumber } = req.body;
     try {
-      user = await userServices.findUserByOne("phonenumber", phonenumber);
-      if (user) {
+      let user = await userServices.findUserByOne("_id", req.userId);
+      let userphone = await userServices.findUserByOne("phonenumber", phonenumber);
+      if (userphone && !(userphone.phonenumber == user.phonenumber)) {
         return res.status(400).json({
           status: "error",
           message: "Phonenumber is already taken",
         });
       }
-      await otpServices.deleteUserOtpsByUserId(user._id);
-      const otp = await otpServices.createUserOtp(user._id);
+      const exist = await whatsappServices.checkWhatapp(phonenumber);
+      if (!exist.existsWhatsapp) {
+          return res.status(400).json({
+            status: "error",
+            message: "phonenumber does not have whasapp connected",
+          });
+      };
+      await otpServices.deleteUserOtpsByUserId(req.userId);
+      const otp = await otpServices.createUserOtp(req.userId);
       await whatsappServices.sendOtpMessage(phonenumber, otp);
       logger.info("User successfully signed up");
       res.status(200).json({
@@ -42,24 +50,17 @@ const sendOTP = async (req, res, next) => {
 const verifyOTP = async (req, res, next) => {
   try {
     let { phonenumber, otp } = req.body;
-    const user = await userServices.findUserByOne("phonenumber", phonenumber);
-    if (!user) {
-      return res.status(404).json({
-        status: "error",
-        message: "User does not exists please re-route to sign up page",
-      });
-    }
-    const userotprecord = await otpServices.findUserOtpByUserId(user._id);
+    const userotprecord = await otpServices.findUserOtpByUserId(req.userId);
     if (!userotprecord) {
       return res.status(404).json({
         status: "error",
-        message: "User has already been verified please login",
+        message: "No OTP found for user",
       });
     } else {
       const hashedotp = userotprecord.otp;
       const expiresat = userotprecord.expiresat;
       if (expiresat < Date.now()) {
-        await otpServices.deleteUserOtpsByUserId(user._id);
+        await otpServices.deleteUserOtpsByUserId(req.userId);
         return res.status(404).json({
           status: "error",
           message: "OTP has expired",
@@ -72,8 +73,8 @@ const verifyOTP = async (req, res, next) => {
             message: "Invalid OTP",
           });
         }
-        await userServices.updateUserByOne(user._id);
-        await otpServices.deleteUserOtpsByUserId(user._id);
+        await userServices.updateUserPhoneByOne(req.userId);
+        await otpServices.deleteUserOtpsByUserId(req.userId);
         logger.info(`phonenumber successfully verified for ${phonenumber}`);
         return res.status(200).json({
           status: "success",
@@ -82,59 +83,59 @@ const verifyOTP = async (req, res, next) => {
       }
     }
   } catch (err) {
-    logger.error("Authentication/Verify:", err);
+    logger.error("Authentication/PhoneVerify:", err);
     next(err);
   }
 };
 
 
-//resend OTP
-const resendOTP = async (req, res, next) => {
-  try {
-    let { phonenumber } = req.body;
-    const user = await userServices.findUserByOne("phonenumber", phonenumber);
-    if (!user) {
-      return res.status(404).json({
-        status: "error",
-        message: "User has no records",
-      });
-    }
-    await otpServices.deleteUserOtpsByUserId(user._id);
-    let otp = await otpServices.createUserOtp(user._id);
-    await whatsappServices.sendOtpMessage(user.phonenumber, otp);
-    logger.info(`OTP sent to ${user._id}`);
-    return res.status(200).json({
-      status: "success",
-      message: "OTP sent successfully",
-      data: { phonenumber },
-    });
-  } catch (err) {
-    logger.error("Authentication/Verify:", err);
-    next(err);
-  }
-};
+// //resend OTP
+// const resendOTP = async (req, res, next) => {
+//   try {
+//     let { phonenumber } = req.body;
+//     const user = await userServices.findUserByOne("phonenumber", phonenumber);
+//     if (!user) {
+//       return res.status(404).json({
+//         status: "error",
+//         message: "User has no records",
+//       });
+//     }
+//     await otpServices.deleteUserOtpsByUserId(req.userId);
+//     let otp = await otpServices.createUserOtp(req.userId);
+//     await whatsappServices.sendOtpMessage(phonenumber, otp);
+//     logger.info(`OTP sent to ${user._id}`);
+//     return res.status(200).json({
+//       status: "success",
+//       message: "OTP sent successfully",
+//       data: { phonenumber },
+//     });
+//   } catch (err) {
+//     logger.error("Authentication/Verify:", err);
+//     next(err);
+//   }
+// };
 
 
 // change Number
 const changephonenumber = async (req, res) => {
   const { phonenumber } = req.body;
   try {
-    let user = await userServices.findUserByOne("phonenumber", phonenumber);
-    if (user) {
+    let user = await userServices.findUserByOne("_id", req.userId);
+    let userphone = await userServices.findUserByOne("phonenumber", phonenumber);
+    if (userphone && !(userphone.phonenumber == user.phonenumber)) {
       return res.status(400).json({
         status: "error",
-        message: "phonenumber already exists",
+        message: "Phonenumber is already taken",
       });
     }
-    user = await userServices.findUserByOne("_id", req.userId);
-    const exist = await whatsappServices.checkWhatapp(phonenumber)
+    const exist = await whatsappServices.checkWhatapp(phonenumber);
     if (!exist.existsWhatsapp) {
         return res.status(400).json({
           status: "error",
           message: "phonenumber does not have whasapp connected",
         });
-    }
-    user.verified = false;
+    };
+    user.whatsappverified = false;
     user.phonenumber = phonenumber;
     await user.save();
     await otpServices.deleteUserOtpsByUserId(user._id);
@@ -179,7 +180,7 @@ const changephonenumberverify = async (req, res) => {
         message: "Invalid OTP",
       });
     }
-    await userServices.updateUserByOne(req.userId);
+    await userServices.updateUserPhoneByOne(req.userId);
     await otpServices.deleteUserOtpsByUserId(req.userId);
     return res.status(200).json({
       status: "success",
@@ -195,7 +196,6 @@ const changephonenumberverify = async (req, res) => {
 module.exports = {
     sendOTP,
     verifyOTP,
-    resendOTP,
     changephonenumber,
     changephonenumberverify
 }

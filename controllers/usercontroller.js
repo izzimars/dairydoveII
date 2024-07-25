@@ -45,7 +45,7 @@ const signup = async (req, res, next) => {
     await otpServices.deleteUserOtpsByUserId(user._id);
     const otp = await otpServices.createUserOtp(user._id);
     await emailServices.sendOtpEmail(email, otp);
-    logger.info("User successfully signed up");
+    logger.info("User successfully signed up", otp);
     res.status(200).json({
       status: "PENDING",
       message: "Verification OTP sent",

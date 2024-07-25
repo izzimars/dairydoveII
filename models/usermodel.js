@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema({
   phonenumber: { type: String, required: true },
   password: { type: String, required: true },
   verified: { type: Boolean, default: false },
+  whatsappverified: { type: Boolean, default: false },
   setup: { type: Boolean, default: false },
   profilePicture: { type: String, required: false },
 });
