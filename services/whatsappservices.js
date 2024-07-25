@@ -179,5 +179,7 @@ startBot();
 
 module.exports = {
   whatsappHandler,
-  checkWhatapp
+  checkWhatapp,
+  sendReminderBot,
+  sendOtpMessage
 };

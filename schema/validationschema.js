@@ -39,8 +39,41 @@ const verifyOTPSchema = Joi.object({
   }),
 });
 
+const sendPhoneOTPSchema = Joi.object({
+  phonenumber: Joi.string()
+    .pattern(/^(\+|0)[1-9]\d{1,14}$/)
+    .message({
+      "string.pattern.base":
+        "Phone number must be a valid international format",
+    })
+    .optional(),
+});
+
+const verifyPhoneOTPSchema = Joi.object({
+  phonenumber: Joi.string()
+    .pattern(/^(\+|0)[1-9]\d{1,14}$/)
+    .message({
+      "string.pattern.base":
+        "Phone number must be a valid international format",
+    })
+    .optional(),
+  otp: Joi.string().max(6).required().messages({
+    "any.only": "Invalid OTP",
+  }),
+});
+
 const resendOTPSchema = Joi.object({
   email: Joi.string().email().required(),
+});
+
+const resendPhoneOTPSchema = Joi.object({
+  phonenumber: Joi.string()
+    .pattern(/^(\+|0)[1-9]\d{1,14}$/)
+    .message({
+      "string.pattern.base":
+        "Phone number must be a valid international format",
+    })
+    .optional(),
 });
 
 const loginSchema = Joi.object({
@@ -139,7 +172,18 @@ const changeemailSchema = Joi.object({
   email: Joi.string().email().required(),
 });
 
-const changeemailVerifySchema = Joi.object({
+
+const changePhonenumberSchema = Joi.object({
+  phonenumber: Joi.string()
+    .pattern(/^(\+|0)[1-9]\d{1,14}$/)
+    .message({
+      "string.pattern.base":
+        "Phone number must be a valid international format",
+    })
+    .optional(),
+});
+
+const changeVerifySchema = Joi.object({
   otp: Joi.string().max(6).required().messages({
     "any.only": "Invalid OTP",
   }),
@@ -165,8 +209,12 @@ module.exports = {
   newPasswordSchema,
   setupPasswdSchema,
   changeemailSchema,
-  changeemailVerifySchema,
+  changeVerifySchema,
   getDiarySchema,
   postSchema,
   mongodbSchema,
+  sendPhoneOTPSchema,
+  verifyPhoneOTPSchema,
+  resendPhoneOTPSchema,
+  changePhonenumberSchema
 };

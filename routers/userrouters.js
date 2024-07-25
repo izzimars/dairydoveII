@@ -2,6 +2,7 @@ const express = require("express");
 const validate = require("../utils/validate");
 const schema = require("../schema/validationschema");
 const userController = require("../controllers/usercontroller");
+const whatsappController = require("../controllers/whatsappControllers");
 const userrouter = express.Router();
 const middleware = require("../utils/middleware");
 const upload = require("../utils/cloudinary");
@@ -13,15 +14,33 @@ userrouter.post(
 );
 
 userrouter.post(
+  "/sendphoneOTP",
+  validate(schema.sendPhoneOTPSchema, "body"),
+  whatsappController.sendOTP
+);
+
+userrouter.post(
   "/verifyOTP",
   validate(schema.verifyOTPSchema, "body"),
   userController.verify
 );
 
 userrouter.post(
+  "/verifyPhoneOTP",
+  validate(schema.verifyPhoneOTPSchema, "body"),
+  whatsappController.verifyOTP
+);
+
+userrouter.post(
   "/resendOTPCode",
   validate(schema.resendOTPSchema),
   userController.resendOTPCode
+);
+
+userrouter.post(
+  "/resendphoneOTP",
+  validate(schema.resendPhoneOTPSchema),
+  whatsappController.resendOTP
 );
 
 userrouter.post("/login", validate(schema.loginSchema), userController.login);
@@ -86,10 +105,24 @@ userrouter.post(
 );
 
 userrouter.post(
+  "/personalinfo/changephonenumber",
+  validate(schema.changePhonenumberSchema),
+  middleware.verifyToken,
+  whatsappController.changephonenumber
+);
+
+userrouter.post(
   "/personalinfo/changeemail/verify",
-  validate(schema.changeemailVerifySchema),
+  validate(schema.changeVerifySchema),
   middleware.verifyToken,
   userController.changeemailverify
+);
+
+userrouter.post(
+  "/personalinfo/changephonenumber/verify",
+  validate(schema.changeVerifySchema),
+  middleware.verifyToken,
+  whatsappController.changephonenumberverify
 );
 
 userrouter.post("/logout", middleware.verifyToken, userController.logout);
