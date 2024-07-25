@@ -13,8 +13,6 @@ const googleAuthCallback = async (req, res, next) => {
   try {
     passport.authenticate("google", { session: false }, async (err, user) => {
       if (err || !user) {
-        console.log("this is error", err);
-        console.log("this is user", user);
         return res
           .status(401)
           .redirect(

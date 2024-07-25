@@ -342,7 +342,7 @@ const profilePictureDelete = async (req, res) => {
 };
 
 const personalinfopost = async (req, res, next) => {
-  const { fullname, username, phonenumber } = req.body;
+  const { fullname, username } = req.body;
   try {
     let user = await userServices.findUserByOne("_id", req.userId);
     let usersname = await userServices.findUserByOne("username", username);
@@ -352,16 +352,8 @@ const personalinfopost = async (req, res, next) => {
         message: "Username is already taken",
       });
     }
-    let userphone = await userServices.findUserByOne("phonenumber", phonenumber);
-    if (userphone && !(usersname.phonenumber == user.phonenumber)) {
-      return res.status(400).json({
-        status: "error",
-        message: "Phonenumber is already taken",
-      });
-    }    
     user.fullname = fullname || user.fullname;
     user.username = username || user.username;
-    user.phonenumber = phonenumber || user.phonenumber;
     await user.save();
     return res.status(200).json({
       status: "success",
