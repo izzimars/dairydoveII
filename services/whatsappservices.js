@@ -3,7 +3,8 @@ const axios = require("axios");
 const logger = require("../utils/logger");
 const config = require("../utils/config");
 const { number } = require("joi");
-const userServices = require("./userService")
+const userServices = require("./userService");
+const diaryServices = require("./diaryServices")
 
 const session = WhatsAppBot.session;
 const Stage = WhatsAppBot.Stage;
@@ -20,6 +21,8 @@ const apiTokenInstance = config.API_TOKEN_INSTANCE;
 // Whatsapp URL
 const sendMessage = async (user_number, message) => {
   try {
+    user_number = user_number.replace(/\+/g,"");
+    user_number = Number(user_number);
     const url = `${apiurl}/waInstance${idInstance}/sendMessage/${apiTokenInstance}`;
     const id = `${user_number}@c.us`;
     const payload = { chatId: id, message: message };
@@ -35,6 +38,9 @@ const sendMessage = async (user_number, message) => {
 //checkWhatapp
 const checkWhatapp = async (user_number) => {
     try {
+      user_number = user_number.replace(/\+/g,"");
+      user_number = Number(user_number);
+      console.log(user_number)
       const url = `${apiurl}/waInstance${idInstance}/checkWhatsapp/${apiTokenInstance}`;
       const payload = { phoneNumber: user_number};
       const headers = { "Content-Type": "application/json" };
@@ -85,6 +91,7 @@ bot.command("diary", (ctx) => {
 });
 bot.on("message", (ctx) => ctx.reply('Send "/diary" to start logging'));
 bot.launch();
+logger.info("Starting Whatsapp bot")
 };
 
 
@@ -93,6 +100,7 @@ const whatsappHandler = async (user_number, message) => {
   logger.info("processing a whatsapp message");
   if (user_number) {
     try {
+      console.log("annoying israel")
       const user = await userServices.findUserByOne("phonenumber", user_number);
       if (!user || !user.verified) {
         await sendNullUser(user_number);
@@ -174,12 +182,10 @@ const sendFaiMes = async (user_number) => {
   }
 };
 
-// sendReminderBot(2349075857450, "Segun");
-startBot();
-// const tried = async() =>{const exist = await checkWhatapp(2349075857450)
-// console.log(!(exist.existsWhatsapp))}
 
-//tried()
+startBot();
+
+
 
 module.exports = {
   whatsappHandler,

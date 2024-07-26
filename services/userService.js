@@ -8,7 +8,7 @@ const findUserByOne = async (field, value) => {
     const user = await User.findOne(query);
     return user;
   } catch (err) {
-    logger.err(err);
+    logger.error(err);
     const error = new Error("Internal Server Error");
     error.status = 500;
     throw error;
@@ -22,7 +22,7 @@ const createUser = async (userData) => {
     logger.info(`User ${user._id} successfully created`);
     return user;
   } catch (err) {
-    logger.info(err.message);
+    logger.error(err);
     const error = new Error("Internal Server Error");
     error.status = 500;
     throw error;
@@ -34,7 +34,7 @@ const updateUserByOne = async (userId) => {
     const user = await User.updateOne({ _id: userId }, { verified: true });
     logger.info(`User profile successfully updated ${userId}`);
   } catch (err) {
-    logger.info(err.message);
+    logger.error(err);
     const error = new Error("Internal Server Error");
     error.status = 500;
     throw error;
@@ -46,7 +46,7 @@ const updateUserPhoneByOne = async (userId) => {
     const user = await User.updateOne({ _id: userId }, { whatsappverified: true });
     logger.info(`User profile successfully updated ${userId}`);
   } catch (err) {
-    logger.info(err.message);
+    logger.error(err);
     const error = new Error("Internal Server Error");
     error.status = 500;
     throw error;

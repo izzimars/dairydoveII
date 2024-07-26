@@ -41,7 +41,7 @@ const verifyOTPSchema = Joi.object({
 
 const sendPhoneOTPSchema = Joi.object({
   phonenumber: Joi.string()
-    .pattern(/^(\+|0)[1-9]\d{1,14}$/)
+    .pattern(/^(\+)[1-9]\d{1,14}$/)
     .message({
       "string.pattern.base":
         "Phone number must be a valid international format",
@@ -175,7 +175,7 @@ const changeemailSchema = Joi.object({
 
 const changePhonenumberSchema = Joi.object({
   phonenumber: Joi.string()
-    .pattern(/^(\+|0)[1-9]\d{1,14}$/)
+    .pattern(/^(\+)[1-9]\d{1,14}$/)
     .message({
       "string.pattern.base":
         "Phone number must be a valid international format",
