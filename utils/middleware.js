@@ -23,7 +23,7 @@ const verifyToken = async (req, res, next) => {
     }
     req.userId = decoded.userId;
     let redistoken = await redisService.getArray(req.userId);
-    if (!(redistoken && redistoken.length > 0)) {
+    if (!(redistoken[0] == token || redistoken[1] == token)) {
       return res.status(403).json({
         status: "error",
         message: "Expired or Invalid token",
