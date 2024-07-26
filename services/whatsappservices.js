@@ -40,6 +40,7 @@ const checkWhatapp = async (user_number) => {
       const headers = { "Content-Type": "application/json" };
       const response = await axios.post(url, payload, { headers: headers });
       logger.info(response.data);
+      return response.data
     } catch (err) {
       logger.error(err.message);
     }
@@ -175,7 +176,10 @@ const sendFaiMes = async (user_number) => {
 
 // sendReminderBot(2349075857450, "Segun");
 startBot();
-//checkWhatapp(2349075857450)
+// const tried = async() =>{const exist = await checkWhatapp(2349075857450)
+// console.log(!(exist.existsWhatsapp))}
+
+//tried()
 
 module.exports = {
   whatsappHandler,
