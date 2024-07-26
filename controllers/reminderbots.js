@@ -3,6 +3,7 @@ const Reminder = require("../models/remindermodel");
 const logger = require("../utils/logger");
 const emailServices = require("../services/emailServices");
 const userServices = require("../services/userService");
+const whatsappServices = require("../services/whatsappservices");
 
 const scheduleReminder = async (reminder) => {
   try {
@@ -32,12 +33,16 @@ const scheduleReminder = async (reminder) => {
           <p>Ignore this message if you have logged your entry for this time.</p>
         </section>
       </div>`;
-      await emailServices.sendEmail(
-        user.email,
-        (subject = "Daily Reminder"),
-        "",
-        html
-      );
+      if(user.verified){
+          await emailServices.sendEmail(
+          user.email,
+          (subject = "Daily Reminder"),
+          "",
+          html
+          );
+        }
+      if(user.whatsappverified)
+        await whatsappServices.sendReminderBot(user.phonenumber,user.username)
     });
   } catch (error) {
     logger.error(`Error scheduling reminder: ${error}`);

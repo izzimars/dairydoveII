@@ -28,7 +28,7 @@ const sendMessage = async (user_number, message) => {
     const payload = { chatId: id, message: message };
     const headers = { "Content-Type": "application/json" };
     const response = await axios.post(url, payload, { headers: headers });
-    logger.info(response.data);
+    logger.info("Message sent successfully");
   } catch (err) {
     logger.error(err.message);
   }
