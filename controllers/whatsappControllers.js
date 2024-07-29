@@ -3,48 +3,47 @@ const otpServices = require("../services/otpservices");
 const userServices = require("../services/userService");
 const logger = require("../utils/logger");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const remainderBots = require("./reminderbots");
-const cloudinary = require("cloudinary").v2;
-const reminderServices = require("../services/reminderServices");
-const redisService = require("../services/redisService");
-const whatsappServices = require('../services/whatsappservices');
-
+const whatsappServices = require("../services/whatsappservices");
 
 //Send OTP
 const sendOTP = async (req, res, next) => {
-    const {  phonenumber } = req.body;
-    try {
-      let user = await userServices.findUserByOne("_id", req.userId);
-      let userphone = await userServices.findUserByOne("phonenumber", phonenumber);
-      if (userphone && !(userphone.phonenumber == user.phonenumber)) {
-        return res.status(400).json({
-          status: "error",
-          message: "Phonenumber is already taken",
-        });
-      }
-      const exist = await whatsappServices.checkWhatapp(phonenumber);
-      if (!exist.existsWhatsapp) {
-          return res.status(400).json({
-            status: "error",
-            message: "phonenumber does not have whasapp connected",
-          });
-      };
-      await otpServices.deleteUserOtpsByUserId(req.userId);
-      const otp = await otpServices.createUserOtp(req.userId);
-      await whatsappServices.sendOtpMessage(phonenumber, otp);
-      logger.info("User successfully signed up");
-      res.status(200).json({
-        status: "PENDING",
-        message: "Verification OTP sent",
-        data: { phonenumber },
+  const { phonenumber } = req.body;
+  try {
+    let user = await userServices.findUserByOne("_id", req.userId);
+    let userphone = await userServices.findUserByOne(
+      "phonenumber",
+      phonenumber
+    );
+    if (userphone && !(userphone.phonenumber == user.phonenumber)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Phonenumber is already taken",
       });
-    } catch (err) {
-      logger.error("Authentication/SendOtp:", err);
-      next(err);
     }
-  };
-
+    const exist = await whatsappServices.checkWhatapp(phonenumber);
+    if (!exist.existsWhatsapp) {
+      return res.status(400).json({
+        status: "error",
+        message: "phonenumber does not have whasapp connected",
+      });
+    }
+    user.whatsappverified = false;
+    user.phonenumber = phonenumber;
+    await user.save();
+    await otpServices.deleteUserOtpsByUserId(req.userId);
+    const otp = await otpServices.createUserOtp(req.userId);
+    await whatsappServices.sendOtpMessage(phonenumber, otp);
+    logger.info("User successfully signed up");
+    res.status(200).json({
+      status: "PENDING",
+      message: "Verification OTP sent",
+      data: { phonenumber },
+    });
+  } catch (err) {
+    logger.error("Authentication/SendOtp:", err);
+    next(err);
+  }
+};
 
 // Verify OTP
 const verifyOTP = async (req, res, next) => {
@@ -88,7 +87,6 @@ const verifyOTP = async (req, res, next) => {
   }
 };
 
-
 // //resend OTP
 // const resendOTP = async (req, res, next) => {
 //   try {
@@ -115,13 +113,15 @@ const verifyOTP = async (req, res, next) => {
 //   }
 // };
 
-
 // change Number
 const changephonenumber = async (req, res) => {
   const { phonenumber } = req.body;
   try {
     let user = await userServices.findUserByOne("_id", req.userId);
-    let userphone = await userServices.findUserByOne("phonenumber", phonenumber);
+    let userphone = await userServices.findUserByOne(
+      "phonenumber",
+      phonenumber
+    );
     if (userphone && !(userphone.phonenumber == user.phonenumber)) {
       return res.status(400).json({
         status: "error",
@@ -130,11 +130,11 @@ const changephonenumber = async (req, res) => {
     }
     const exist = await whatsappServices.checkWhatapp(phonenumber);
     if (!exist.existsWhatsapp) {
-        return res.status(400).json({
-          status: "error",
-          message: "phonenumber does not have whasapp connected",
-        });
-    };
+      return res.status(400).json({
+        status: "error",
+        message: "phonenumber does not have whasapp connected",
+      });
+    }
     user.whatsappverified = false;
     user.phonenumber = phonenumber;
     await user.save();
@@ -151,7 +151,6 @@ const changephonenumber = async (req, res) => {
     next(err);
   }
 };
-
 
 //Verify changed Number
 const changephonenumberverify = async (req, res) => {
@@ -192,10 +191,9 @@ const changephonenumberverify = async (req, res) => {
   }
 };
 
-
 module.exports = {
-    sendOTP,
-    verifyOTP,
-    changephonenumber,
-    changephonenumberverify
-}
+  sendOTP,
+  verifyOTP,
+  changephonenumber,
+  changephonenumberverify,
+};

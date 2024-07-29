@@ -14,7 +14,7 @@ const setArray = async (key, array) => {
 const getArray = async (key) => {
   try {
     const myArray = await redisClient.get(key);
-    logger.info(`getting key for ${key}`);
+    //logger.info(`getting key for ${key}`);
     return JSON.parse(myArray);
   } catch (err) {
     logger.error("Error getting token from Redis:", err);

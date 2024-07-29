@@ -4,7 +4,7 @@ const logger = require("../utils/logger");
 const config = require("../utils/config");
 const { number } = require("joi");
 const userServices = require("./userService");
-const diaryServices = require("./diaryServices")
+const diaryServices = require("./diaryServices");
 
 const session = WhatsAppBot.session;
 const Stage = WhatsAppBot.Stage;
@@ -21,7 +21,7 @@ const apiTokenInstance = config.API_TOKEN_INSTANCE;
 // Whatsapp URL
 const sendMessage = async (user_number, message) => {
   try {
-    user_number = user_number.replace(/\+/g,"");
+    user_number = user_number.replace(/\+/g, "");
     user_number = Number(user_number);
     const url = `${apiurl}/waInstance${idInstance}/sendMessage/${apiTokenInstance}`;
     const id = `${user_number}@c.us`;
@@ -30,27 +30,32 @@ const sendMessage = async (user_number, message) => {
     const response = await axios.post(url, payload, { headers: headers });
     logger.info("Message sent successfully");
   } catch (err) {
-    logger.error(err.message);
+    logger.error("Error occured in Whatsapp/sendMessage", err);
+    const error = new Error("Internal Server Error");
+    error.status = 500;
+    throw error;
   }
 };
 
-
 //checkWhatapp
 const checkWhatapp = async (user_number) => {
-    try {
-      user_number = user_number.replace(/\+/g,"");
-      user_number = Number(user_number);
-      console.log(user_number)
-      const url = `${apiurl}/waInstance${idInstance}/checkWhatsapp/${apiTokenInstance}`;
-      const payload = { phoneNumber: user_number};
-      const headers = { "Content-Type": "application/json" };
-      const response = await axios.post(url, payload, { headers: headers });
-      logger.info(response.data);
-      return response.data
-    } catch (err) {
-      logger.error(err.message);
-    }
-  };
+  try {
+    user_number = user_number.replace(/\+/g, "");
+    user_number = Number(user_number);
+    console.log(user_number);
+    const url = `${apiurl}/waInstance${idInstance}/checkWhatsapp/${apiTokenInstance}`;
+    const payload = { phoneNumber: user_number };
+    const headers = { "Content-Type": "application/json" };
+    const response = await axios.post(url, payload, { headers: headers });
+    logger.info(response.data);
+    return response.data;
+  } catch (err) {
+    logger.error("Error occured in Whatsapp/sendMessage", err);
+    const error = new Error("Internal Server Error");
+    error.status = 500;
+    throw error;
+  }
+};
 
 // Doings scene
 let diaryContent = "";
@@ -78,29 +83,28 @@ doingsScene.on("message", (ctx) => {
 });
 
 //initializing bot
-const startBot= () => {
-const bot = new WhatsAppBot({
-  idInstance: idInstance,
-  apiTokenInstance: apiTokenInstance,
-});
-const stage = new Stage([doingsScene]);
-bot.use(session());
-bot.use(stage.middleware());
-bot.command("diary", (ctx) => {
-  ctx.scene.enter("doings");
-});
-bot.on("message", (ctx) => ctx.reply('Send "/diary" to start logging'));
-bot.launch();
-logger.info("Starting Whatsapp bot")
+const startBot = () => {
+  const bot = new WhatsAppBot({
+    idInstance: idInstance,
+    apiTokenInstance: apiTokenInstance,
+  });
+  const stage = new Stage([doingsScene]);
+  bot.use(session());
+  bot.use(stage.middleware());
+  bot.command("diary", (ctx) => {
+    ctx.scene.enter("doings");
+  });
+  bot.on("message", (ctx) => ctx.reply('Send "/diary" to start logging'));
+  bot.launch();
+  logger.info("Starting Whatsapp bot");
 };
-
 
 //Whasapp diary log handler
 const whatsappHandler = async (user_number, message) => {
   logger.info("processing a whatsapp message");
   if (user_number) {
     try {
-      console.log("annoying israel")
+      console.log("annoying israel");
       const user = await userServices.findUserByOne("phonenumber", user_number);
       if (!user || !user.verified) {
         await sendNullUser(user_number);
@@ -113,19 +117,19 @@ const whatsappHandler = async (user_number, message) => {
         diaryContent = "";
       }
     } catch (error) {
-      logger.error(
-        `An error occurred for user ${user_number}: ${error.message}`
-      );
+      logger.error(`An error occurred for user ${user_number}: ${error}`);
       try {
         await sendFaiMes(user_number);
         diaryContent = "";
       } catch (err) {
-        logger.error("An error occurred at whatsapp handler: ", err.message);
+        logger.error("Error occured in Whatsapp/sendMessage", err);
+        const error = new Error("Internal Server Error");
+        error.status = 500;
+        throw error;
       }
     }
   }
 };
-
 
 //send OTP function
 const sendOtpMessage = async (user_number, otp) => {
@@ -133,10 +137,12 @@ const sendOtpMessage = async (user_number, otp) => {
     message = `Enter this ${otp} in the app to complete your verification.\n\nOTP expires in 6 minutes.`;
     await sendMessage(user_number, message);
   } catch (err) {
-    logger.error("whatsapp SendOtpMessage:", err.message);
+    logger.error("Error occured in Whatsapp/sendMessage", err);
+    const error = new Error("Internal Server Error");
+    error.status = 500;
+    throw error;
   }
 };
-
 
 // Send Reminder function
 const sendReminderBot = async (user_number, username) => {
@@ -144,10 +150,12 @@ const sendReminderBot = async (user_number, username) => {
     message = `Hello ${username}😊\n\nIt is time to take a break and be one with your thoughts.\n\n\nDiary Dove is reminding you to log a diary entry now.\n\n\nReply this message or sign into the app to load your entry\n\n\nIgnore this message if you have logged your entry for this time.`;
     await sendMessage(user_number, message);
   } catch (err) {
-    logger.error("whatsapp sendReminderBot:",err.message);
+    logger.error("Error occured in Whatsapp/sendMessage", err);
+    const error = new Error("Internal Server Error");
+    error.status = 500;
+    throw error;
   }
 };
-
 
 // Send SUccessful message function
 const sendSucMes = async (user_number) => {
@@ -156,10 +164,12 @@ const sendSucMes = async (user_number) => {
     await sendMessage(user_number, message);
     logger.info(response.data);
   } catch (err) {
-    logger.error("whatsapp sendSucMes:",err.message);
+    logger.error("Error occured in Whatsapp/sendMessage", err);
+    const error = new Error("Internal Server Error");
+    error.status = 500;
+    throw error;
   }
 };
-
 
 // send invalid user function
 const sendNullUser = async (user_number) => {
@@ -167,10 +177,12 @@ const sendNullUser = async (user_number) => {
     message = `Failed to save Diary.\n\n\nEither user is not registered or not verified, Log into diary dove to rectify.\n\n\nIgnore this message if you have logged your entry for this time.`;
     await sendMessage(user_number, message);
   } catch (err) {
-    logger.error("whatsapp sendNullUser:",err.message);
+    logger.error("Error occured in Whatsapp/sendMessage", err);
+    const error = new Error("Internal Server Error");
+    error.status = 500;
+    throw error;
   }
 };
-
 
 //send failure message function
 const sendFaiMes = async (user_number) => {
@@ -178,18 +190,18 @@ const sendFaiMes = async (user_number) => {
     message = `Error occured on the server please resend your diary or sign in to diary dove to log your entry.\n\n\nIgnore this message if you have logged your entry for this time.`;
     await sendMessage(user_number, message);
   } catch (err) {
-    logger.error("whatsapp sendFaiMes:",err.message);
+    logger.error("Error occured in Whatsapp/sendMessage", err);
+    const error = new Error("Internal Server Error");
+    error.status = 500;
+    throw error;
   }
 };
 
-
 startBot();
-
-
 
 module.exports = {
   whatsappHandler,
   checkWhatapp,
   sendReminderBot,
-  sendOtpMessage
+  sendOtpMessage,
 };
