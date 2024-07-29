@@ -26,7 +26,7 @@ const googleAuthCallback = async (req, res, next) => {
       const refreshtoken = jwt.sign({ userId: user._id }, config.SECRET, {
         expiresIn: "7h",
       });
-      await redisService.setArray(id, [token, refreshtoken]);
+      await redisService.setArray(user._id.toString(), [token, refreshtoken]);
       const authData = JSON.stringify({
         token,
         refreshtoken,
