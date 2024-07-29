@@ -104,9 +104,7 @@ const whatsappHandler = async (user_number, message) => {
   logger.info("processing a whatsapp message");
   if (user_number) {
     try {
-      console.log("annoying israel");
       const user = await userServices.findUserByOne("phonenumber", user_number);
-      console.log(user)
       if (!user || !user.verified) {
         await sendNullUser(user_number);
         logger.info(`A log was attempted by ${user_number}`);
@@ -148,7 +146,7 @@ const sendOtpMessage = async (user_number, otp) => {
 // Send Reminder function
 const sendReminderBot = async (user_number, username) => {
   try {
-    message = `Hello ${username}😊\n\nIt is time to take a break and be one with your thoughts.\n\n\nDiary Dove is reminding you to log a diary entry now.\n\n\nReply this message or sign into the app to load your entry\n\n\nIgnore this message if you have logged your entry for this time.`;
+    message = `Hello ${username}😊\n\nIt is time to take a break and be one with your thoughts.\n\nDiary Dove is reminding you to log a diary entry now.\n\nReply this message or sign into the app to load your entry\n\nIgnore this message if you have logged your entry for this time.`;
     await sendMessage(user_number, message);
   } catch (err) {
     logger.error("Error occured in Whatsapp/sendMessage", err);
@@ -161,9 +159,8 @@ const sendReminderBot = async (user_number, username) => {
 // Send SUccessful message function
 const sendSucMes = async (user_number) => {
   try {
-    message = `Diary has been successfully logged.\n\n\nIgnore this message if you have logged your entry for this time.`;
+    message = `Diary has been successfully logged.\n\nIgnore this message if you have logged your entry for this time.`;
     await sendMessage(user_number, message);
-    logger.info(response.data);
   } catch (err) {
     logger.error("Error occured in Whatsapp/sendMessage", err);
     const error = new Error("Internal Server Error");
@@ -175,7 +172,7 @@ const sendSucMes = async (user_number) => {
 // send invalid user function
 const sendNullUser = async (user_number) => {
   try {
-    message = `Failed to save Diary.\n\n\nEither user is not registered or not verified, Log into diary dove to rectify.\n\n\nIgnore this message if you have logged your entry for this time.`;
+    message = `Failed to save Diary.\n\nEither user is not registered or not verified, Log into diary dove to rectify.\n\nIgnore this message if you have logged your entry for this time.`;
     await sendMessage(user_number, message);
   } catch (err) {
     logger.error("Error occured in Whatsapp/sendMessage", err);
@@ -188,7 +185,7 @@ const sendNullUser = async (user_number) => {
 //send failure message function
 const sendFaiMes = async (user_number) => {
   try {
-    message = `Error occured on the server please resend your diary or sign in to diary dove to log your entry.\n\n\nIgnore this message if you have logged your entry for this time.`;
+    message = `Error occured on the server please resend your diary or sign in to diary dove to log your entry.\n\nIgnore this message if you have logged your entry for this time.`;
     await sendMessage(user_number, message);
   } catch (err) {
     logger.error("Error occured in Whatsapp/sendMessage", err);
