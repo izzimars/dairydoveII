@@ -67,6 +67,7 @@ doingsScene.leave((ctx) => {
   ctx.reply("Thanks for logging with Diary Dove, Bye😊");
   let number = ctx.update.message["chat"].id;
   number = number.split("@")[0];
+  number = "+"+number;
   logger.info(number);
   console.log("message");
   diaryContent = diaryContent.trim();
