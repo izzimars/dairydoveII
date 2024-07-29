@@ -70,7 +70,6 @@ doingsScene.leave((ctx) => {
   logger.info(number);
   console.log("message");
   diaryContent = diaryContent.trim();
-  console.log(diaryContent);
   whatsappHandler(number, diaryContent);
 });
 doingsScene.hears(["end", "End"], leave("doings"));
@@ -106,6 +105,7 @@ const whatsappHandler = async (user_number, message) => {
     try {
       console.log("annoying israel");
       const user = await userServices.findUserByOne("phonenumber", user_number);
+      console.log(user)
       if (!user || !user.verified) {
         await sendNullUser(user_number);
         logger.info(`A log was attempted by ${user_number}`);
