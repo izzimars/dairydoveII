@@ -19,7 +19,7 @@ cron.schedule("*/1 * * * *", async () => {
 const diarypost = async (req, res, next) => {
   const { content } = req.body;
   try {
-    const diary = await diaryServices.createDiaryWeb({
+    const diary = await diaryServices.createDiary({
       userId: req.userId,
       content,
     });
@@ -115,25 +115,25 @@ const getid = async (req, res, next) => {
 };
 
 //edit a diary
-const postUpdate = async (req, res, next) => {
-  //I need a JOI schema to verify what's coming in the req.params.id
-  const diary_id = req.params.id;
-  const { content } = req.body;
-  try {
-    const diary = await diaryServices.finddiaryByOne("_id", diary_id);
-    diary.content = content;
-    await diary.save();
-    logger.info("Saved edited diary ${diary_id} by user {req.userId}");
-    return res.status(200).json({
-      status: "success",
-      message: "Diaries succesfully edited",
-      data: diary,
-    });
-  } catch (err) {
-    logger.error("Diary/PostId :", err);
-    next(err);
-  }
-};
+// const postUpdate = async (req, res, next) => {
+//   //I need a JOI schema to verify what's coming in the req.params.id
+//   const diary_id = req.params.id;
+//   const { content } = req.body;
+//   try {
+//     const diary = await diaryServices.finddiaryByOne("_id", diary_id);
+//     diary.content = content;
+//     await diary.save();
+//     logger.info("Saved edited diary ${diary_id} by user {req.userId}");
+//     return res.status(200).json({
+//       status: "success",
+//       message: "Diaries succesfully edited",
+//       data: diary,
+//     });
+//   } catch (err) {
+//     logger.error("Diary/PostId :", err);
+//     next(err);
+//   }
+// };
 
 //Delete a diary
 const deleteDiary = async (req, res, next) => {
@@ -170,7 +170,6 @@ module.exports = {
   diaryget,
   filter,
   getid,
-  postUpdate,
   deleteDiary,
   deleteAllDiary,
 };

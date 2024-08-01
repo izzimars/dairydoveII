@@ -33,12 +33,12 @@ diaryrouter.get(
   diaryController.getid
 );
 
-diaryrouter.patch(
-  "/:id",
-  validate(schema.mongodbSchema, "params"),
-  middleware.verifyToken,
-  diaryController.postUpdate
-);
+// diaryrouter.patch(
+//   "/:id",
+//   validate(schema.mongodbSchema, "params"),
+//   middleware.verifyToken,
+//   diaryController.postUpdate
+// );
 
 diaryrouter.delete(
   "/delete/:id",
