@@ -29,6 +29,10 @@ const findUserReminder = async (value) => {
 };
 
 const createReminder = async (userId, hour, mins) => {
+  const rem = await Reminder.find({ userId: userId });
+  if (rem.length >= 3) {
+    return `Max`;
+  }
   try {
     const newReminder = new Reminder({
       userId: userId,
