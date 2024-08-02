@@ -1,6 +1,15 @@
 const Diary = require("../models/diarymodel");
 const logger = require("../utils/logger");
 
+//Helper function
+const getDate = (today) => {
+  const day = today.getDate();
+  const month = today.toLocaleString("default", { month: "long" });
+  return `${day} ${month}`;
+};
+
+//Diary functions
+
 const finddiaryByOne = async (field, value) => {
   try {
     const query = {};
@@ -52,11 +61,33 @@ const findUserDiariesFilter = async (
 
 const createDiary = async (diaryData) => {
   try {
-    const diary = await new Diary(diaryData);
-    await diary.save();
-    logger.info(`Diary ${diary._id} successfully created`);
+    const diaryarr = await Diary.find({ userId: diaryData.userId }).sort({
+      date: -1,
+    });
+    let newDiaryDate;
+    if (diaryarr.length > 0) {
+      const currentDiary = diaryarr[0];
+      const oldDiaryDate = getDate(new Date(diaryarr[0].date));
+      newDiaryDate = getDate(new Date());
+      if (newDiaryDate == oldDiaryDate) {
+        currentDiary.content = diaryData.content;
+        await currentDiary.save();
+        logger.info(`Diary ${currentDiary._id} successfully created`);
+        return currentDiary;
+      } else {
+        const newdiary = new Diary(diaryData);
+        await newdiary.save();
+        logger.info(`Diary ${newdiary._id} successfully created`);
+        return newdiary;
+      }
+    } else {
+      const diary = new Diary(diaryData);
+      await diary.save();
+      logger.info(`Diary ${diary._id} successfully created`);
+      return diary;
+    }
   } catch (err) {
-    logger.info(err.message);
+    logger.info(err);
     const error = new Error("Internal Server Error");
     error.status = 500;
     throw error;
@@ -65,12 +96,33 @@ const createDiary = async (diaryData) => {
 
 const createDiaryWeb = async (diaryData) => {
   try {
-    const diary = await new Diary(diaryData);
-    await diary.save();
-    logger.info(`Diary ${diary._id} successfully created`);
-    return diary;
+    const diaryarr = await Diary.find({ userId: diaryData.userId }).sort({
+      date: -1,
+    });
+    let newDiaryDate;
+    if (diaryarr.length > 0) {
+      const currentDiary = diaryarr[0];
+      const oldDiaryDate = getDate(new Date(diaryarr[0].date));
+      newDiaryDate = getDate(new Date());
+      if (newDiaryDate == oldDiaryDate) {
+        currentDiary.content = currentDiary.content + "\n" + diaryData.content;
+        await currentDiary.save();
+        logger.info(`Diary ${currentDiary._id} successfully created`);
+        return currentDiary;
+      } else {
+        const newdiary = new Diary(diaryData);
+        await newdiary.save();
+        logger.info(`Diary ${newdiary._id} successfully created`);
+        return newdiary;
+      }
+    } else {
+      const diary = new Diary(diaryData);
+      await diary.save();
+      logger.info(`Diary ${diary._id} successfully created`);
+      return diary;
+    }
   } catch (err) {
-    logger.info(err.message);
+    logger.info(err);
     const error = new Error("Internal Server Error");
     error.status = 500;
     throw error;

@@ -28,9 +28,9 @@ userrouter.post(
 
 userrouter.post(
   "/verifyPhoneOTP",
-  validate(schema.verifyPhoneOTPSchema, "body"),
+  validate(schema.changeVerifySchema),
   middleware.verifyToken,
-  whatsappController.verifyOTP
+  whatsappController.changephonenumberverify
 );
 
 userrouter.post(

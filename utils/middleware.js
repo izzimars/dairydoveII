@@ -31,10 +31,17 @@ const verifyToken = async (req, res, next) => {
     }
     next();
   } catch (err) {
-    return res.status(401).json({
-      status: "error",
-      message: "Invalid token or expired token.",
-    });
+    if (err.name == "MongooseError") {
+      return res.status(401).json({
+        status: "error",
+        message: "Internal Server Error.",
+      });
+    } else {
+      return res.status(401).json({
+        status: "error",
+        message: "Invalid token or expired token.",
+      });
+    }
   }
 };
 

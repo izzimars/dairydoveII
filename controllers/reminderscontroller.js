@@ -61,6 +61,12 @@ const addReminders = async (req, res, next) => {
           hourmins[0],
           hourmins[1]
         );
+        if (typeof newReminder == "string" && newReminder == "Max") {
+          return res.status(200).json({
+            status: "success",
+            message: `Maximum number of reminder reached`,
+          });
+        }
         await reminderBot.scheduleReminder(newReminder);
         logger.info(`The reminder has been set for ${newReminder._id}`);
         suc += 1;
