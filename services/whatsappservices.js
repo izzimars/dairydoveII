@@ -61,24 +61,24 @@ const checkWhatapp = async (user_number) => {
 let diaryContent = "";
 const doingsScene = new Scene("doings");
 doingsScene.enter((ctx) =>
-  ctx.reply('Start logging your dairy entry now\n\nEnd it by sending "end"')
+  ctx.reply('Hello😊,\n\nWe have started logging your dairy entry now\n\nEnd it by sending "1" or "end"')
 );
 doingsScene.leave((ctx) => {
-  ctx.reply("Thanks for logging with Diary Dove, Bye😊");
   let number = ctx.update.message["chat"].id;
   number = number.split("@")[0];
   number = "+" + number;
   logger.info(number);
   console.log("message");
   diaryContent = diaryContent.trim();
+  ctx.reply("Thanks for logging with Diary Dove, Bye😊");
   whatsappHandler(number, diaryContent);
 });
-doingsScene.hears(["end", "End"], leave("doings"));
+doingsScene.hears(["end", "End", "1"], leave("doings"));
 doingsScene.on("message", (ctx) => {
   let newm = ctx.update.message.text;
   diaryContent = diaryContent + "\n" + newm;
   ctx.replyWithMarkdown(
-    'would you like to continue your entry?\n\nIf so keep logging, if not send "end"'
+    'would you like to continue your entry?\n\nIf so keep logging, if not send "1"or "end"'
   );
 });
 
@@ -91,10 +91,14 @@ const startBot = () => {
   const stage = new Stage([doingsScene]);
   bot.use(session());
   bot.use(stage.middleware());
-  bot.command("diary", (ctx) => {
+  bot.hears("diary", (ctx) => {
     ctx.scene.enter("doings");
   });
-  bot.on("message", (ctx) => ctx.reply('Send "/diary" to start logging'));
+  bot.on("message", (ctx) => {
+    let newm = ctx.update.message.text;
+    diaryContent = diaryContent + "\n" + newm;
+    ctx.scene.enter("doings");
+  });
   bot.launch();
   logger.info("Starting Whatsapp bot");
 };
@@ -149,7 +153,7 @@ const sendOtpMessage = async (user_number, otp) => {
 // Send Reminder function
 const sendReminderBot = async (user_number, username) => {
   try {
-    message = `Hello ${username}😊\n\nIt is time to take a break and be one with your thoughts.\n\nDiary Dove is reminding you to log a diary entry now.\n\nReply this message or sign into the app to load your entry\n\nIgnore this message if you have logged your entry for this time.`;
+    message = `Hello ${username}😊\n\nIt is time to take a break and be one with your thoughts.\n\nDiary Dove is reminding you to log a diary entry now.\n\nReply this message or sign into the app to start logging your entry\n\nIgnore this message if you have logged your entry for this time.`;
     await sendMessage(user_number, message);
   } catch (err) {
     logger.error("Error occured in Whatsapp/sendMessage", err);
