@@ -91,7 +91,10 @@ const emailHandler = async (messages) => {
           await sendNullUserEmail(emailaddress);
           logger.info(`A log was attempted by ${emailaddress}`);
         } else {
-          await diaryServices.createDiary({ userId: user._id, content: text });
+          await diaryServices.createDiaryWeb({
+            userId: user._id,
+            content: text,
+          });
           await sendSucUserEmail(emailaddress);
           logger.info(`A log was saved for ${emailaddress}`);
         }
