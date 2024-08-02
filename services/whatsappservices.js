@@ -67,7 +67,7 @@ doingsScene.leave((ctx) => {
   ctx.reply("Thanks for logging with Diary Dove, Bye😊");
   let number = ctx.update.message["chat"].id;
   number = number.split("@")[0];
-  number = "+"+number;
+  number = "+" + number;
   logger.info(number);
   console.log("message");
   diaryContent = diaryContent.trim();
@@ -110,7 +110,10 @@ const whatsappHandler = async (user_number, message) => {
         logger.info(`A log was attempted by ${user_number}`);
         diaryContent = "";
       } else {
-        await diaryServices.createDiary({ userId: user._id, content: message });
+        await diaryServices.createDiaryWeb({
+          userId: user._id,
+          content: message,
+        });
         await sendSucMes(user_number);
         logger.info(`A log was saved for ${user_number}`);
         diaryContent = "";
