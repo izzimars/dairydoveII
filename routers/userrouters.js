@@ -77,7 +77,7 @@ userrouter.post(
   "/uploadProfilePicture",
   middleware.verifyToken,
   upload.single("profilePicture"),
-  userController.profilePicture
+  userController.profilePicturef
 );
 
 userrouter.delete(
