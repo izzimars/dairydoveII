@@ -61,7 +61,9 @@ const checkWhatapp = async (user_number) => {
 let diaryContent = "";
 const doingsScene = new Scene("doings");
 doingsScene.enter((ctx) =>
-  ctx.reply('Hello😊,\n\nWe have started logging your dairy entry now\n\n1.Press "1" to save this entry\n2.Press "2" to clear this entry\n3.Press "3" to end this session')
+  ctx.reply(
+    'Hello😊,\n\nWe have started logging your dairy entry now\n\n1. Press "1" to clear this entry\n2. Press "2" to end this session'
+  )
 );
 doingsScene.leave((ctx) => {
   let number = ctx.update.message["chat"].id;
@@ -69,22 +71,29 @@ doingsScene.leave((ctx) => {
   number = "+" + number;
   logger.info(number);
   diaryContent = diaryContent.trim();
+  console.log(diaryContent);
   ctx.reply("Thanks for logging with Diary Dove, Bye😊");
   whatsappHandler(number, diaryContent);
 });
-doingsScene.hears(["save", "Save", "1"], (ctx) => {
-  let newm = ctx.update.message.text;
-  diaryContent = diaryContent + "\n" + newm;
-});
-doingsScene.hears(["clear", "Clear", "2"],(ctx) => {
+// doingsScene.hears(["save", "Save", "1"], (ctx) => {
+//   ctx.replyWithMarkdown(
+//     'Last entries successfully added please😊, continue with a new mesage. \n3.Press "3" to save this session'
+//   );
+// });
+doingsScene.hears(["clear", "Clear", "1"], (ctx) => {
+  let remvLine = diaryContent.split("\n");
+  remvLine.pop();
+  diaryContent = remvLine.join("\n");
   ctx.replyWithMarkdown(
-    'Last entry successfully cleared please😊, continue with a new mesage'
+    'Last line successfully cleared from diary entries \nPlease😊, continue with a new mesage. \n2. Press "2" to end and save this session'
   );
 });
-doingsScene.hears(["end", "End", "3"], leave("doings"));
+doingsScene.hears(["end", "End", "2"], leave("doings"));
 doingsScene.on("message", (ctx) => {
+  let newm = ctx.update.message.text;
+  diaryContent = diaryContent + "\n" + newm;
   ctx.replyWithMarkdown(
-    'what would you like to do?\n\n1.Press "1" to save this entry\n2.Press "2" to clear this entry\n3.Press "3" to end this session'
+    'Last entries successfully added \nPlease😊, continue with a new mesage\n\n1. Press "1" to clear last entry\n2. Press "2" to end and save this session'
   );
 });
 
@@ -112,6 +121,7 @@ const startBot = () => {
 //Whasapp diary log handler
 const whatsappHandler = async (user_number, message) => {
   logger.info("processing a whatsapp message");
+  console.log(message);
   if (user_number) {
     try {
       const user = await userServices.findUserByOne("phonenumber", user_number);
