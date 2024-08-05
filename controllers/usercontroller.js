@@ -10,6 +10,7 @@ const remainderBots = require("./reminderbots");
 const cloudinary = require("cloudinary").v2;
 const reminderServices = require("../services/reminderServices");
 const redisService = require("../services/redisService");
+const reminderBot = require("./reminderbots");
 
 const signup = async (req, res, next) => {
   const { fullname, username, email, phonenumber, password } = req.body;
@@ -241,11 +242,17 @@ const setup = async (req, res, next) => {
   try {
     for (const time of reminders) {
       let hourmins = await remainderBots.timeSplitter(time);
-      await reminderServices.createReminder(
+      const newReminder = await reminderServices.createReminder(
         req.userId,
         hourmins[0],
         hourmins[1]
       );
+      if (typeof newReminder == "string" && newReminder == "Max") {
+        return res.status(200).json({
+          status: "success",
+          message: `Maximum number of reminder reached`,
+        });
+      }
       suc += 1;
     }
     const user = await userServices.findUserByOne("_id", req.userId);

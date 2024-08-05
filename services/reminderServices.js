@@ -1,6 +1,7 @@
 const Reminder = require("../models/remindermodel");
 const logger = require("../utils/logger");
 const schedule = require("node-schedule");
+const reminderBot = require("../controllers/reminderbots");
 
 const findReminderById = async (remId) => {
   try {
@@ -39,6 +40,7 @@ const createReminder = async (userId, hour, mins) => {
       hour: hour,
       time: mins,
     });
+    await reminderBot.scheduleReminder(newReminder);
     await newReminder.save();
     logger.info(`Reminder saved for ${newReminder._id}`);
     return newReminder;
