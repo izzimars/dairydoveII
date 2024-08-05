@@ -61,24 +61,30 @@ const checkWhatapp = async (user_number) => {
 let diaryContent = "";
 const doingsScene = new Scene("doings");
 doingsScene.enter((ctx) =>
-  ctx.reply('Hello😊,\n\nWe have started logging your dairy entry now\n\nEnd it by sending "1" or "end"')
+  ctx.reply('Hello😊,\n\nWe have started logging your dairy entry now\n\n1.Press "1" to save this entry\n2.Press "2" to clear this entry\n3.Press "3" to end this session')
 );
 doingsScene.leave((ctx) => {
   let number = ctx.update.message["chat"].id;
   number = number.split("@")[0];
   number = "+" + number;
   logger.info(number);
-  console.log("message");
   diaryContent = diaryContent.trim();
   ctx.reply("Thanks for logging with Diary Dove, Bye😊");
   whatsappHandler(number, diaryContent);
 });
-doingsScene.hears(["end", "End", "1"], leave("doings"));
-doingsScene.on("message", (ctx) => {
+doingsScene.hears(["save", "Save", "1"], (ctx) => {
   let newm = ctx.update.message.text;
   diaryContent = diaryContent + "\n" + newm;
+});
+doingsScene.hears(["clear", "Clear", "2"],(ctx) => {
   ctx.replyWithMarkdown(
-    'would you like to continue your entry?\n\nIf so keep logging, if not send "1"or "end"'
+    'Last entry successfully cleared please😊, continue with a new mesage'
+  );
+});
+doingsScene.hears(["end", "End", "3"], leave("doings"));
+doingsScene.on("message", (ctx) => {
+  ctx.replyWithMarkdown(
+    'what would you like to do?\n\n1.Press "1" to save this entry\n2.Press "2" to clear this entry\n3.Press "3" to end this session'
   );
 });
 
