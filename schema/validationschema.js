@@ -1,5 +1,19 @@
 const Joi = require("joi");
 
+const contactSchema = Joi.object({
+  firstname: Joi.string().min(3).max(50).required(),
+  lastname: Joi.string().min(3).required(),
+  email: Joi.string().email().required(),
+  phonenumber: Joi.string()
+    .pattern(/^(\+|0)[1-9]\d{1,14}$/)
+    .message({
+      "string.pattern.base":
+        "Phone number must be a valid international format",
+    })
+    .required(),
+  content: Joi.string().min(3).required(),
+});
+
 const signupSchema = Joi.object({
   fullname: Joi.string().min(3).max(50).required(),
   username: Joi.string().min(3).required(),
@@ -172,7 +186,6 @@ const changeemailSchema = Joi.object({
   email: Joi.string().email().required(),
 });
 
-
 const changePhonenumberSchema = Joi.object({
   phonenumber: Joi.string()
     .pattern(/^(\+)[1-9]\d{1,14}$/)
@@ -216,5 +229,6 @@ module.exports = {
   sendPhoneOTPSchema,
   verifyPhoneOTPSchema,
   resendPhoneOTPSchema,
-  changePhonenumberSchema
+  changePhonenumberSchema,
+  contactSchema,
 };

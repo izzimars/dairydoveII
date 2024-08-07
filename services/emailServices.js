@@ -140,7 +140,7 @@ const sendEmail = async (
     await transporter.sendMail(mailOptions);
     logger.info("email is sent succesfully");
   } catch (err) {
-    logger.error(err.message);
+    logger.error("Error in sending mail", err);
     const error = new Error("Internal Server Error");
     error.status = 500;
     throw error;

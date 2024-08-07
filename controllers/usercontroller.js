@@ -12,6 +12,29 @@ const reminderServices = require("../services/reminderServices");
 const redisService = require("../services/redisService");
 const reminderBot = require("./reminderbots");
 
+const contact = async (req, res, next) => {
+  const { firstname, lastname, email, phonenumber, content } = req.body;
+  try {
+    let emailbody = "Firstname: " + firstname + "\n";
+    emailbody = emailbody + "Lastname: " + lastname + "\n";
+    emailbody = emailbody + "Phone Number: " + phonenumber + "\n";
+    emailbody = emailbody + "Email: " + email + "\n";
+    emailbody = emailbody + "\n" + content;
+    await emailServices.sendEmail(
+      "infodiarydove@gmail.com",
+      (subject = "Customer's FeedBack"),
+      (reminderText = emailbody),
+      (htmltext = "")
+    );
+    return res.status(200).json({
+      status: "success",
+      message: "Feedback successfully logged",
+    });
+  } catch (err) {
+    logger.error("Customers Feedback:", err);
+    next(err);
+  }
+};
 const signup = async (req, res, next) => {
   const { fullname, username, email, phonenumber, password } = req.body;
   try {
@@ -489,4 +512,5 @@ module.exports = {
   changepassword,
   changeemail,
   changeemailverify,
+  contact,
 };

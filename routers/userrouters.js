@@ -8,6 +8,12 @@ const middleware = require("../utils/middleware");
 const upload = require("../utils/cloudinary");
 
 userrouter.post(
+  "/feedback",
+  validate(schema.contactSchema, "body"),
+  userController.contact
+);
+
+userrouter.post(
   "/signup",
   validate(schema.signupSchema, "body"),
   userController.signup
