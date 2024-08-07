@@ -187,6 +187,7 @@ const sendReminderBot = async (user_number, username) => {
   try {
     message = `Hello ${username}😊\n\nIt is time to take a break and be one with your thoughts.\n\nDiary Dove is reminding you to log a diary entry now.\n\nReply this message or sign into the app to start logging your entry\n\nIgnore this message if you have logged your entry for this time.`;
     await sendMessage(user_number, message);
+    logger.info("Whatsapp Reminder is sent successfully");
   } catch (err) {
     logger.error("Error occured in Whatsapp/sendMessage", err);
     const error = new Error("Internal Server Error");
