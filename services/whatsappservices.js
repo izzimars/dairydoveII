@@ -85,7 +85,7 @@ doingsScene.hears(["clear", "Clear", "1"], (ctx) => {
   remvLine.pop();
   diaryContent = remvLine.join("\n");
   ctx.replyWithMarkdown(
-    'Last line successfully cleared from diary entries \nPlease😊, continue with a new mesage. \n2. Press "2" to end and save this session'
+    'Last line successfully cleared from diary entries \nPlease😊, continue with a new mesage. \n\n2. Press "2" to end and save this session'
   );
 });
 doingsScene.hears(["end", "End", "2"], leave("doings"));
@@ -93,7 +93,7 @@ doingsScene.on("message", (ctx) => {
   let newm = ctx.update.message.text;
   diaryContent = diaryContent + "\n" + newm;
   ctx.replyWithMarkdown(
-    'Last entries successfully added \nPlease😊, continue with a new mesage\n\n1. Press "1" to clear last entry\n2. Press "2" to end and save this session'
+    'Last entries successfully added \nPlease😊, continue with a new mesage\n\n1. Press "1" to clear last entry\n\n2. Press "2" to end and save this session'
   );
 });
 
