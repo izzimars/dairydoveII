@@ -5,7 +5,7 @@ const config = require("../utils/config");
 const { number } = require("joi");
 const userServices = require("./userService");
 const diaryServices = require("./diaryServices");
-
+let inactivityTimeout;
 const session = WhatsAppBot.session;
 const Stage = WhatsAppBot.Stage;
 const Scene = WhatsAppBot.BaseScene;
@@ -60,11 +60,24 @@ const checkWhatapp = async (user_number) => {
 // Doings scene
 let diaryContent = "";
 const doingsScene = new Scene("doings");
-doingsScene.enter((ctx) =>
+
+const resetInactivityTimeout = (ctx) => {
+  clearTimeout(inactivityTimeout);
+  inactivityTimeout = setTimeout(() => {
+    ctx.reply(
+      "Session ended due to inactivity. Your diary entry has been saved."
+    );
+    ctx.scene.leave(); // Leave the scene
+  }, 60 * 60 * 1000); // 30 minutes in milliseconds
+};
+
+doingsScene.enter((ctx) => {
   ctx.reply(
     'Hello😊,\n\nWe have started logging your dairy entry now\n\n1. Press "1" to clear this entry\n2. Press "2" to end this session'
-  )
-);
+  );
+  resetInactivityTimeout(ctx);
+});
+
 doingsScene.leave((ctx) => {
   let number = ctx.update.message["chat"].id;
   number = number.split("@")[0];
@@ -80,6 +93,7 @@ doingsScene.leave((ctx) => {
 //     'Last entries successfully added please😊, continue with a new mesage. \n3.Press "3" to save this session'
 //   );
 // });
+
 doingsScene.hears(["clear", "Clear", "1"], (ctx) => {
   let remvLine = diaryContent.split("\n");
   remvLine.pop();
@@ -88,7 +102,9 @@ doingsScene.hears(["clear", "Clear", "1"], (ctx) => {
     'Last line successfully cleared from diary entries \nPlease😊, continue with a new mesage. \n\n2. Press "2" to end and save this session'
   );
 });
+
 doingsScene.hears(["end", "End", "2"], leave("doings"));
+
 doingsScene.on("message", (ctx) => {
   let newm = ctx.update.message.text;
   diaryContent = diaryContent + "\n" + newm;
