@@ -73,7 +73,7 @@ const resetInactivityTimeout = (ctx) => {
 
 doingsScene.enter((ctx) => {
   ctx.reply(
-    'Hello😊 tester,\n\nWe have started logging your dairy entry now\n\n1. Press "1" to clear this entry\n2. Press "2" to end this session'
+    'Hello😊,\n\nWe have started logging your dairy entry now\n\n1. Press "1" to clear this entry\n2. Press "2" to end this session'
   );
 });
 
@@ -109,7 +109,7 @@ doingsScene.on("message", (ctx) => {
   diaryContent = diaryContent + "\n" + newm;
   console.log(diaryContent);
   ctx.replyWithMarkdown(
-    'Last entries su \nPlease😊, continue with a new mesage\n\n1. Press "1" to clear last entry\n2. Press "2" to end and save this session'
+    'Last entries successfully added \nPlease😊, continue with a new mesage\n\n1. Press "1" to clear last entry\n2. Press "2" to end and save this session'
   );
   resetInactivityTimeout(ctx);
 });
