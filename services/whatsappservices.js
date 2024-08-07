@@ -238,7 +238,6 @@ const sendFaiMes = async (user_number) => {
 
 startBot();
 
-
 module.exports = {
   whatsappHandler,
   checkWhatapp,
