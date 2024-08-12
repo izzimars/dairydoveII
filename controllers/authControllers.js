@@ -38,7 +38,7 @@ const googleAuthCallback = async (req, res, next) => {
       return res
         .status(200)
         .redirect(
-          `http://diary-dove-frontend.vercel.app/auth/callback?authData=${encodeURIComponent(
+          `https://www.diarydove.com/auth/callback?authData=${encodeURIComponent(
             authData
           )}`
         );
