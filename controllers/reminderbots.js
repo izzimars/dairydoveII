@@ -4,6 +4,7 @@ const logger = require("../utils/logger");
 const emailServices = require("../services/emailServices");
 const userServices = require("../services/userService");
 const whatsappServices = require("../services/whatsappservices");
+const { ObjectId } = require("mongodb");
 
 const scheduleReminder = async (reminder) => {
   try {
@@ -11,14 +12,15 @@ const scheduleReminder = async (reminder) => {
     const rule = new schedule.RecurrenceRule();
     rule.hour = reminder.hour;
     rule.minute = reminder.time;
-    const user = await userServices.findUserByOne("_id", reminder.userId);
+    let user = await userServices.findUserById(reminder.userId);
     if (!user) {
-      throw new Error(`User with ID ${reminder.user} not found`);
+      logger.info(`User with ID ${reminder.userId} not found`);
+      return "None";
     }
     logger.info(
       `User found: ${user._id}, scheduling job for ${rule.hour}:${rule.minute}:${rule.second}`
     );
-    schedule.scheduleJob(rule, async () => {
+    let shedRem = schedule.scheduleJob(rule, async () => {
       logger.info(`Reminder job running for user ${user._id}`);
       const logoURL = `https://res.cloudinary.com/dwykmvdhb/image/upload/v1721222788/xn1fblohfrvwopzcmaq3.png`;
       const html = `
@@ -33,36 +35,22 @@ const scheduleReminder = async (reminder) => {
           <p>Ignore this message if you have logged your entry for this time.</p>
         </section>
       </div>`;
-      if(user.verified){
-          await emailServices.sendEmail(
+      if (user.verified) {
+        await emailServices.sendEmail(
           user.email,
           (subject = "Daily Reminder"),
           "",
           html
-          );
-        }
-      if(user.whatsappverified)
-        await whatsappServices.sendReminderBot(user.phonenumber,user.username)
+        );
+      }
+      if (user.whatsappverified)
+        await whatsappServices.sendReminderBot(user.phonenumber, user.username);
     });
+    return shedRem.name;
   } catch (error) {
     logger.error(`Error scheduling reminder: ${error}`);
     error.status = 500;
     throw error;
-  }
-};
-
-// Function to fetch reminders from database and schedule them
-const scheduleAllReminders = async () => {
-  try {
-    const reminders = await Reminder.find({});
-    reminders.forEach((reminder) => {
-      scheduleReminder(reminder);
-    });
-    logger.info("All reminders scheduled.");
-  } catch (err) {
-    logger.error("Error fetching reminders:", err);
-    err.status = 500;
-    throw err;
   }
 };
 
@@ -108,6 +96,5 @@ const timeSplitter = async (time) => {
 
 module.exports = {
   timeSplitter,
-  scheduleAllReminders,
   scheduleReminder,
 };

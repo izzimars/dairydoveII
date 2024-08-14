@@ -1,6 +1,7 @@
 const reminderBot = require("./reminderbots");
 const logger = require("../utils/logger");
 const reminderServices = require("../services/reminderServices");
+const schedule = require("node-schedule");
 
 // getting all reminders
 const getReminders = async (req, res, next) => {
@@ -8,10 +9,14 @@ const getReminders = async (req, res, next) => {
     const reminders = await reminderServices.findUserReminder({
       userId: req.userId,
     });
+    const retunedRems = reminders.map((i) => {
+      const transformedI = i.toJSON();
+      return { id: transformedI.id, hour: i.hour, time: i.time };
+    });
     return res.status(200).json({
       status: "success",
       message: "Reminders successfully retrieved",
-      data: reminders,
+      data: retunedRems,
     });
   } catch (err) {
     console.error("Error creating reminder", err);
@@ -67,7 +72,6 @@ const addReminders = async (req, res, next) => {
             message: `Maximum number of reminder reached`,
           });
         }
-        await reminderBot.scheduleReminder(newReminder);
         logger.info(`The reminder has been set for ${newReminder._id}`);
         suc += 1;
       }

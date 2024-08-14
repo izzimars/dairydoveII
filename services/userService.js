@@ -15,6 +15,18 @@ const findUserByOne = async (field, value) => {
   }
 };
 
+const findUserById = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    return user;
+  } catch (err) {
+    logger.error(err);
+    const error = new Error("Internal Server Error");
+    error.status = 500;
+    throw error;
+  }
+};
+
 const createUser = async (userData) => {
   try {
     const user = new User(userData);
@@ -43,7 +55,10 @@ const updateUserByOne = async (userId) => {
 
 const updateUserPhoneByOne = async (userId) => {
   try {
-    const user = await User.updateOne({ _id: userId }, { whatsappverified: true });
+    const user = await User.updateOne(
+      { _id: userId },
+      { whatsappverified: true }
+    );
     logger.info(`User profile successfully updated ${userId}`);
   } catch (err) {
     logger.error(err);
@@ -57,5 +72,6 @@ module.exports = {
   findUserByOne,
   createUser,
   updateUserByOne,
-  updateUserPhoneByOne
+  updateUserPhoneByOne,
+  findUserById,
 };

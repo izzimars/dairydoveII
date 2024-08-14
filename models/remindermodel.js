@@ -4,6 +4,7 @@ const ReminderSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   hour: { type: Number, required: true },
   time: { type: Number, required: true },
+  jobId: { type: String },
 });
 
 ReminderSchema.set("toJSON", {
@@ -11,7 +12,6 @@ ReminderSchema.set("toJSON", {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
-    delete returnedObject.userId;
   },
 });
 
