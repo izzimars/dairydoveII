@@ -72,6 +72,9 @@ const addReminders = async (req, res, next) => {
             message: `Maximum number of reminder reached`,
           });
         }
+        if (typeof newReminder == "string" && newReminder == "Dup") {
+          continue;
+        }
         logger.info(`The reminder has been set for ${newReminder._id}`);
         suc += 1;
       }

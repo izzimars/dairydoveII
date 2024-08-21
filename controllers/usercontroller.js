@@ -276,6 +276,9 @@ const setup = async (req, res, next) => {
           message: `Maximum number of reminder reached`,
         });
       }
+      if (typeof newReminder == "string" && newReminder == "Dup") {
+        continue;
+      }
       suc += 1;
     }
     const user = await userServices.findUserByOne("_id", req.userId);

@@ -37,6 +37,11 @@ const createReminder = async (userId, hour, mins) => {
   if (rem.length >= 3) {
     return `Max`;
   }
+  for (const time of rem) {
+    if (time.hour == hour && time.time == mins) {
+      return "Dup";
+    }
+  }
   try {
     let newReminder = new Reminder({
       userId: userId,
