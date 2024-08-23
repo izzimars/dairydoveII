@@ -84,13 +84,6 @@ const timeSplitter = async (time) => {
     error.status = 400;
     throw error;
   }
-  hour -= 1;
-  if (hour == -1) {
-    hour = 23;
-  }
-  if (hour >= 24) {
-    hour -= 24;
-  }
   return [hour, minutes];
 };
 

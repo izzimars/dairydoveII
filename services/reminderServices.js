@@ -19,10 +19,10 @@ const findReminderById = async (remId) => {
 const findUserReminder = async (value) => {
   try {
     const rem = await Reminder.find(value);
-    rem.map((i) => {
-      i.hour = i.hour + 1 >= 24 ? 0 : i.hour + 1;
-      return i;
-    });
+    // rem.map((i) => {
+    //   i.hour = i.hour + 1 >= 24 ? 0 : i.hour + 1;
+    //   return i;
+    // });
     return rem;
   } catch (err) {
     logger.info(err.message);
